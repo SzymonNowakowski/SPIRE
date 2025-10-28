@@ -1,4 +1,4 @@
-S# SPIRE: Structure Projection Image Recognition Environment
+# SPIRE: Structure Projection Image Recognition Environment
 
 A tool to compute planar projections of 3D surfaces
 
