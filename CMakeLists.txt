@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6.4)
+cmake_minimum_required(VERSION 3.16)
 project (SPIRE)
 set (CMAKE_CXX_STANDARD 11) # needed for Mac OS X
 
