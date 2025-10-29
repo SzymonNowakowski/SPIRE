@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project (SPIRE)
-set (CMAKE_CXX_STANDARD 11) # needed for Mac OS X
+set (CMAKE_CXX_STANDARD 20)
 
 #add an option to build the gui or only terminal appliaction
 option(BUILD_QT_GUI "Builds the GUI (QT) instead of terminal interface" ON)
@@ -23,7 +23,20 @@ SET(SRC_QT_GUI ./src/qt_gui.cpp ./src/qt_main.cpp ./src/qt_sp.cpp ./src/slice_or
 SET(IML_DIR ./ext_libs/iml-1.0.5/src/)
 SET(SRC_IML ${IML_DIR}/nullspace.c ${IML_DIR}/basisop.c ${IML_DIR}/certsolve.c ${IML_DIR}/error.c ${IML_DIR}/latreduce.c ${IML_DIR}/memalloc.c ${IML_DIR}/mtrans.c ${IML_DIR}/nonsysolve.c ${IML_DIR}/nullspace.c ${IML_DIR}/padiclift.c ${IML_DIR}/reconsolu.c ${IML_DIR}/RNSop.c )
 
-include_directories(./ext_libs/iml-1.0.5/src)
+# MSVC: provide bzero via memset for IML C sources (no source edits)
+if (MSVC)
+  set_source_files_properties(${SRC_IML}
+          PROPERTIES
+          COMPILE_DEFINITIONS "bzero(p,n)=memset((p),0,(n))"
+          COMPILE_OPTIONS "/FIstring.h"  # force-include <string.h> so memset is declared
+  )
+endif()
+
+# Prefer a system/OpenBLAS cblas.h; fall back to IML's local header
+find_path(CBLAS_INCLUDE_DIR
+        NAMES cblas.h
+        PATH_SUFFIXES openblas
+)
 
 if(BUILD_QT_GUI)
   #build the gui, bring in all necessary libraries
@@ -34,16 +47,26 @@ if(BUILD_QT_GUI)
 
   add_executable(SPIRE ${SRC_BASE} ${SRC_QT_GUI} ${SRC_IML} resources.qrc)
 
-  find_package(Qt5 COMPONENTS Widgets Gui Svg REQUIRED)
-  find_library(gmp gmp)
+  # MSVC: map bzero -> memset for C sources in this target, and force-include <string.h>
+  target_compile_definitions(SPIRE PRIVATE $<$<AND:$<C_COMPILER_ID:MSVC>,$<COMPILE_LANGUAGE:C>>:bzero(p,n)=memset((p),0,(n))>)
+  target_compile_options(   SPIRE PRIVATE $<$<AND:$<C_COMPILER_ID:MSVC>,$<COMPILE_LANGUAGE:C>>:/FIstring.h>)
+
+  # Ensure include priority: system/OpenBLAS first, then IML fallback
+  if(CBLAS_INCLUDE_DIR)
+    target_include_directories(SPIRE PRIVATE ${CBLAS_INCLUDE_DIR})
+  endif()
+  target_include_directories(SPIRE PRIVATE ${IML_DIR})
+
+  # Qt6: QSvgWidget lives in SvgWidgets in Qt6
+  find_package(Qt6 COMPONENTS Core Gui Widgets Svg SvgWidgets REQUIRED)
 
   SET(BLA_VENDOR OpenBLAS)
-  find_package(BLAS)  
-  target_link_libraries(SPIRE BLAS::BLAS gmp)
-
+  find_package(BLAS)
+  # remove gmp from link to avoid LNK1104; CGAL pulls GMP/MPFR transitively if needed
+  target_link_libraries(SPIRE BLAS::BLAS)
 
   #check if we have CGAL
-  find_package(CGAL REQUIRED)    
+  find_package(CGAL REQUIRED)
   if( CGAL_FOUND )
     add_compile_definitions(USE_CGAL)
     target_link_libraries(SPIRE CGAL::CGAL)
@@ -55,18 +78,23 @@ if(BUILD_QT_GUI)
     target_link_libraries(SPIRE PNG::PNG)
     target_include_directories(SPIRE PRIVATE PNG_INCLUDE_DIRS)
   endif()
-    
-  target_link_libraries(SPIRE Qt5::Widgets Qt5::Gui Qt5::Svg)
+
+  # add SvgWidgets here (Qt6 requirement for QSvgWidget)
+  target_link_libraries(SPIRE Qt6::Widgets Qt6::Gui Qt6::Svg Qt6::SvgWidgets)
 endif(BUILD_QT_GUI)
 
-
 if(BUILD_COMPUTE_CHANNEL_PROPORTIONS)
-
   add_executable(SPIRE_get_channel_proportions ${SRC_BASE} ${SRC_IML} ./src/get_channel_proportions.cpp)
 
-  find_library(gmp gmp)
-  find_package(BLAS)    
-  target_link_libraries(SPIRE_get_channel_proportions  BLAS::BLAS gmp)  
+  # Ensure include priority: system/OpenBLAS first, then IML fallback
+  if(CBLAS_INCLUDE_DIR)
+    target_include_directories(SPIRE_get_channel_proportions PRIVATE ${CBLAS_INCLUDE_DIR})
+  endif()
+  target_include_directories(SPIRE_get_channel_proportions PRIVATE ${IML_DIR})
+
+  # keep BLAS; drop gmp (not needed here, avoids unresolved manual gmp.lib)
+  find_package(BLAS)
+  target_link_libraries(SPIRE_get_channel_proportions BLAS::BLAS)
 endif(BUILD_COMPUTE_CHANNEL_PROPORTIONS)
 
 
@@ -74,17 +102,23 @@ if( BUILD_BATCH_TOOL )
 
   add_executable(SPIRE_batch_tool ${SRC_BASE} ${SRC_IML} ./src/batch_tool.cpp resources.qrc)
 
-  find_library(gmp gmp)
-  find_package(BLAS)  
+  # Ensure include priority: system/OpenBLAS first, then IML fallback
+  if(CBLAS_INCLUDE_DIR)
+    target_include_directories(SPIRE_batch_tool PRIVATE ${CBLAS_INCLUDE_DIR})
+  endif()
+  target_include_directories(SPIRE_batch_tool PRIVATE ${IML_DIR})
+
+  # keep exactly as before re: BLAS/CGAL/PNG; just drop gmp to avoid manual .lib
+  find_package(BLAS)
   find_package(CGAL REQUIRED)
   find_package(PNG REQUIRED)
-  target_link_libraries(SPIRE_batch_tool BLAS::BLAS gmp)  
+  target_link_libraries(SPIRE_batch_tool BLAS::BLAS gmp)
 
   if( PNG_FOUND )
     add_compile_definitions(HAVE_PNG)
     target_link_libraries(SPIRE_batch_tool PNG::PNG)
     target_include_directories(SPIRE_batch_tool PRIVATE PNG_INCLUDE_DIRS)
-  endif()  
+  endif()
 
   if( CGAL_FOUND )
     add_compile_definitions(USE_CGAL)

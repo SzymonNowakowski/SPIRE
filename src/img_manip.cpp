@@ -1,5 +1,5 @@
 #include "img_manip.hpp"
-
+#include <numbers>
 
 
 image_manipulation::image_manipulation(){
@@ -9,7 +9,7 @@ image_manipulation::image_manipulation(){
 
 double symm_gaussian_2D( double x, double y, double sigma ){
   
-  return (1.0/( 2 * M_PI * sigma * sigma ) ) * exp( -(x*x + y*y) / (2*sigma*sigma)   );
+  return (1.0/( 2 * std::numbers::pi * sigma * sigma ) ) * exp( -(x*x + y*y) / (2*sigma*sigma)   );
   
 }
 

@@ -49,7 +49,8 @@
 #include <QFile>
 #include <QProgressBar>
 #include <QRegularExpression>
-#include <QtSvg/QSvgWidget>
+#include <QtSvgWidgets/QSvgWidget>
+
 
 #include <QThread>
 #include <QMutex>

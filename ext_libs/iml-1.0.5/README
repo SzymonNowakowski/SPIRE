@@ -11,4 +11,4 @@ See doc/liblink for how to link your program with the library.
 See doc/libroutines for routine reference.
 See examples/readme for how to compile the examples
 
-The header file cblas.h is taken from the netlib BLAS library.
+The header file openblas/cblas.h is taken from the netlib BLAS library.

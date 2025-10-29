@@ -1,3 +1,6 @@
+2025-10-29 Szymon Nowakowski
+    * make it compilable under Linux and Windows for more modern C++
+
 2014-07-23 Jean-Pierre Flori
 	* upgrade to version 1.0.4 which includes patches from the Sage
 	  distribution:

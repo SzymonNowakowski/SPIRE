@@ -23,6 +23,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <numbers>
 
 
 class svg_color_palette {
@@ -294,12 +295,12 @@ public:
     
     double angle = std::fabs( atan2( (y2 - y1) , (x2 - x1) ) );
 
-    if( angle > 0.5*M_PI ) angle = M_PI - angle;
+    if( angle > 0.5*std::numbers::pi ) angle = std::numbers::pi - angle;
 
-    double open_a = M_PI/6.;
+    double open_a = std::numbers::pi/6.;
     double sigma1, sigma2;
     sigma1 = angle - open_a;
-    sigma2 = M_PI - open_a - angle;
+    sigma2 = std::numbers::pi - open_a - angle;
 
     //double l = 0.2 * sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
   

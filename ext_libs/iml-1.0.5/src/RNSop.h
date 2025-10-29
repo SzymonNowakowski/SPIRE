@@ -89,7 +89,14 @@
 #ifndef RNSOP_H
 #define RNSOP_H 1
 
-#include "cblas.h"
+#if __has_include(<cblas.h>)
+  #include <cblas.h>
+#elif __has_include(<openblas/cblas.h>)
+  #include <openblas/cblas.h>
+#else
+  // Last resort: use the bundled Netlib-compatible fallback
+  #include "cblas.h"
+#endif
 #include "gmp.h"
 #include "basisop.h"
 #include "common.h"

@@ -99,7 +99,14 @@
 #ifndef CERTSOLVE_H
 #define CERTSOLVE_H 1
 
-#include "cblas.h"
+#if __has_include(<cblas.h>)
+  #include <cblas.h>
+#elif __has_include(<openblas/cblas.h>)
+  #include <openblas/cblas.h>
+#else
+  // Last resort: use the bundled Netlib-compatible fallback
+  #include "cblas.h"
+#endif
 #include "gmp.h"
 #include "common.h"
 #include "basisop.h"
