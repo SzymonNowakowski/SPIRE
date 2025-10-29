@@ -68,6 +68,44 @@ if(BUILD_QT_GUI)
 
   # add SvgWidgets here (Qt6 requirement for QSvgWidget)
   target_link_libraries(SPIRE Qt6::Widgets Qt6::Gui Qt6::Svg Qt6::SvgWidgets)
+
+  # ========== Windows deployment (MinGW DLLs + Qt) ==========
+  if(WIN32 AND MINGW)
+    # Get the compiler's bin directory
+    get_filename_component(COMPILER_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+
+    # List of required MinGW runtime DLLs
+    set(MINGW_DLLS
+            libstdc++-6.dll
+            libgcc_s_seh-1.dll
+            libwinpthread-1.dll
+    )
+
+    # Copy each DLL to the output directory after build
+    foreach(DLL ${MINGW_DLLS})
+      add_custom_command(TARGET SPIRE POST_BUILD
+              COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              "${COMPILER_DIR}/${DLL}"
+              $<TARGET_FILE_DIR:SPIRE>
+              COMMENT "Copying ${DLL} to output directory"
+      )
+    endforeach()
+  endif()
+
+  # Windows: Run windeployqt to copy Qt DLLs and plugins
+  if(WIN32)
+    find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${Qt6_DIR}/../../../bin")
+
+    if(WINDEPLOYQT_EXECUTABLE)
+      add_custom_command(TARGET SPIRE POST_BUILD
+              COMMAND ${WINDEPLOYQT_EXECUTABLE}
+              --no-compiler-runtime
+              $<TARGET_FILE:SPIRE>
+              COMMENT "Running windeployqt..."
+      )
+    endif()
+  endif()
+  # ========== End Windows deployment ==========
 endif(BUILD_QT_GUI)
 
 if(BUILD_COMPUTE_CHANNEL_PROPORTIONS)
@@ -111,5 +149,28 @@ if( BUILD_BATCH_TOOL )
     add_compile_definitions(USE_CGAL)
     target_link_libraries(SPIRE_batch_tool CGAL::CGAL)
   endif()
+  # ========== Windows deployment for batch tool ==========
+  if(WIN32 AND MINGW)
+    # Get the compiler's bin directory
+    get_filename_component(COMPILER_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+
+    # List of required MinGW runtime DLLs
+    set(MINGW_DLLS
+            libstdc++-6.dll
+            libgcc_s_seh-1.dll
+            libwinpthread-1.dll
+    )
+
+    # Copy each DLL to the output directory after build
+    foreach(DLL ${MINGW_DLLS})
+      add_custom_command(TARGET SPIRE_batch_tool POST_BUILD
+              COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              "${COMPILER_DIR}/${DLL}"
+              $<TARGET_FILE_DIR:SPIRE_batch_tool>
+              COMMENT "Copying ${DLL} to batch tool output directory"
+      )
+    endforeach()
+  endif()
+  # ========== End Windows deployment for batch tool ==========
 
 endif( BUILD_BATCH_TOOL )
