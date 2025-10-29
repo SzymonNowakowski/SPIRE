@@ -2146,6 +2146,8 @@ double surface_projection::get_parameter( std::string par ){
       }
     }
   }
+
+  return 0;
   
 }
 

@@ -23,15 +23,6 @@ SET(SRC_QT_GUI ./src/qt_gui.cpp ./src/qt_main.cpp ./src/qt_sp.cpp ./src/slice_or
 SET(IML_DIR ./ext_libs/iml-1.0.5/src/)
 SET(SRC_IML ${IML_DIR}/nullspace.c ${IML_DIR}/basisop.c ${IML_DIR}/certsolve.c ${IML_DIR}/error.c ${IML_DIR}/latreduce.c ${IML_DIR}/memalloc.c ${IML_DIR}/mtrans.c ${IML_DIR}/nonsysolve.c ${IML_DIR}/nullspace.c ${IML_DIR}/padiclift.c ${IML_DIR}/reconsolu.c ${IML_DIR}/RNSop.c )
 
-# MSVC: provide bzero via memset for IML C sources (no source edits)
-if (MSVC)
-  set_source_files_properties(${SRC_IML}
-          PROPERTIES
-          COMPILE_DEFINITIONS "bzero(p,n)=memset((p),0,(n))"
-          COMPILE_OPTIONS "/FIstring.h"  # force-include <string.h> so memset is declared
-  )
-endif()
-
 # Prefer a system/OpenBLAS cblas.h; fall back to IML's local header
 find_path(CBLAS_INCLUDE_DIR
         NAMES cblas.h
@@ -46,10 +37,6 @@ if(BUILD_QT_GUI)
   set(CMAKE_AUTOUIC ON)
 
   add_executable(SPIRE ${SRC_BASE} ${SRC_QT_GUI} ${SRC_IML} resources.qrc)
-
-  # MSVC: map bzero -> memset for C sources in this target, and force-include <string.h>
-  target_compile_definitions(SPIRE PRIVATE $<$<AND:$<C_COMPILER_ID:MSVC>,$<COMPILE_LANGUAGE:C>>:bzero(p,n)=memset((p),0,(n))>)
-  target_compile_options(   SPIRE PRIVATE $<$<AND:$<C_COMPILER_ID:MSVC>,$<COMPILE_LANGUAGE:C>>:/FIstring.h>)
 
   # Ensure include priority: system/OpenBLAS first, then IML fallback
   if(CBLAS_INCLUDE_DIR)
