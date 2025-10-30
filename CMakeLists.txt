@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project (SPIRE)
-set (CMAKE_CXX_STANDARD 20)
+set (CMAKE_CXX_STANDARD 11)
 
 #add an option to build the gui or only terminal appliaction
 option(BUILD_QT_GUI "Builds the GUI (QT) instead of terminal interface" ON)

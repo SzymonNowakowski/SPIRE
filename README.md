@@ -11,7 +11,7 @@ License: GPLv3
 This software uses CMake as build system. To build from the sources, following packages are needed:
 
 - CMake (tested with 3.16.3)
-- C++ compiler with C++ 20 (had to upgrade C++ compiler to redefine pi under numbers header)
+- C++ compiler with C++ 2011 support
 - Qt min vers. 6.9.3 ( and its dependencies ). Components required: Widgets, Gui, Svg
 - libpng and libz
 - libgmp

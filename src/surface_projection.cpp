@@ -17,7 +17,7 @@
 
 
 #include "surface_projection.hpp"
-#include <numbers>
+
 
 // set static members
 const std::vector<std::string> surface_projection::parameter_names = std::vector<std::string> { "struct_types", "uc_scale_ab", "uc_scale_c", "surface_level", "vol_prop", "slice_thickness", "slice_height", "slice_width", "slice_position", "miller_h", "miller_k", "miller_l", "membrane_width" };
@@ -381,13 +381,13 @@ void surface_projection::print_max_rad_transform_dist( std::string fn ){
 /** Standard constructor initialize with the standard values and
  *  derive some more quantities
  */
-surface_projection::surface_projection( global_settings &gs_ ) : gs( gs_ ), slice_position(0), a(3,1), inv_a(3,2*std::numbers::pi), uc_scale_ab( 1.0 ), uc_scale_c( 1.0 ), L(3,1), L_2(3,0.5), n_points_x(76), n_points_y(76), n_points_z(76), type(2), h(0), k(0), l(1), uc_dim_in_orientation(3, 1), surface_level( 0.0f ), s_tables() {
+surface_projection::surface_projection( global_settings &gs_ ) : gs( gs_ ), slice_position(0), a(3,1), inv_a(3,2*M_PI), uc_scale_ab( 1.0 ), uc_scale_c( 1.0 ), L(3,1), L_2(3,0.5), n_points_x(76), n_points_y(76), n_points_z(76), type(2), h(0), k(0), l(1), uc_dim_in_orientation(3, 1), surface_level( 0.0f ), s_tables() {
 
 
   // init the base vectors
   b1 = {1,0,0};
   b2 = {0,1,0};
-  alpha=std::numbers::pi/2.0;
+  alpha=M_PI/2.0;
 
   update_a();
   
@@ -449,7 +449,7 @@ void surface_projection::set_orientation_from_hkl(){
 
   // make it between 0 and 360
   if( n[1] < 0 ){
-    phi = 2*std::numbers::pi - phi;
+    phi = 2*M_PI - phi;
   }
   
   theta = acos( VEC_MAT_MATH::dot_prod( n, z) );  
@@ -1781,8 +1781,8 @@ void surface_projection::update_channel_fill_container(){
 }
 
 void surface_projection::set_theta( double ang ){
-  if( ang > std::numbers::pi ){
-    theta  = std::numbers::pi - tolerance;
+  if( ang > M_PI ){
+    theta  = M_PI - tolerance;
     throw invalid_parameter_exception( "Angle too large" );
   } else if( ang < 0 ) {
     theta = 0;
@@ -1793,8 +1793,8 @@ void surface_projection::set_theta( double ang ){
 }
 
 void surface_projection::set_phi( double ang ){
-  if( ang > 2*std::numbers::pi ){
-    phi  = 2*std::numbers::pi - tolerance;
+  if( ang > 2*M_PI ){
+    phi  = 2*M_PI - tolerance;
     throw invalid_parameter_exception( "Angle too large" );
   } else if( ang < 0 ) {
     phi = 0;
@@ -1892,9 +1892,9 @@ void surface_projection::update_a(){
     a[0] = uc_scale_ab * unitcell_dim[type][0];
     a[1] = uc_scale_ab * unitcell_dim[type][1];
     a[2] = uc_scale_c * unitcell_dim[type][2];
-    inv_a[0] = 2*std::numbers::pi/(a[0]); // period for nodal representations
-    inv_a[1] = 2*std::numbers::pi/(a[1]); // period for nodal representations        
-    inv_a[2] = 2*std::numbers::pi/(a[2]); // period for nodal representations
+    inv_a[0] = 2*M_PI/(a[0]); // period for nodal representations
+    inv_a[1] = 2*M_PI/(a[1]); // period for nodal representations        
+    inv_a[2] = 2*M_PI/(a[2]); // period for nodal representations
 
 
     /*
