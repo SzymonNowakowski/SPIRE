@@ -51,10 +51,26 @@ Pre-compiled Windows binaries, including all dependencies, are available online.
 
 If you wish to compile from source and need help, please contact hain [at] uni-potsdam.de . I used QT Creator with mingw to compile these binaries, so if you are using that I could maybe help you with that.
 
+#### CLion with MinGW
+
+The sources can also be compiled in CLion using MinGW.
+
+#### CLion CMake requires additional options for MinGW
+
+These are the basic options (below, you can also use `OFF` instead of `ON`):
 ```{bash}
-CLion CMake additional options
--DQt6_DIR=C:/Qt/6.9.3/mingw_64/lib/cmake/Qt6 -DCMAKE_TOOLCHAIN_FILE=C:\Users\szymon\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PREFIX_PATH="C:\Qt\6.9.3\mingw_64"
+--DBUILD_QT_GUI=ON -DBUILD_BATCH_TOOL=ON
 ```
+
+These additional options are required. They should follow the following template:
+```{bash}
+-DQt6_DIR=C:/Qt/6.9.3/mingw_64/lib/cmake/Qt6 -DCMAKE_TOOLCHAIN_FILE=C:\Users\<username>\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PREFIX_PATH="C:\Qt\6.9.3\mingw_64"
+```
+
+#### CLion with MSVS
+
+There is an (apparently unsolvable) issue when compiling with Microsoft Visual Studio (MSVC): due to an ABI incompatibility, the IML library which is written in pure C and assumes 32-bit `long` types, leads to conflicts with the C++ routines that invoke it.
+
 
 ## Usage
 
