@@ -11,8 +11,8 @@ License: GPLv3
 This software uses CMake as build system. To build from the sources, following packages are needed:
 
 - CMake (tested with 3.16.3)
-- C++ compiler with C++ 2011 support (tested with g++ vers. 8+)
-- Qt min vers. 5.12.5 ( and its dependencies ). Components required: Widgets, Gui, Svg
+- C++ compiler with C++ 20 (had to upgrade C++ compiler to redefine pi under numbers header)
+- Qt min vers. 6.9.3 ( and its dependencies ). Components required: Widgets, Gui, Svg
 - libpng and libz
 - libgmp
 - libgmpfr
@@ -51,7 +51,10 @@ Pre-compiled Windows binaries, including all dependencies, are available online.
 
 If you wish to compile from source and need help, please contact hain [at] uni-potsdam.de . I used QT Creator with mingw to compile these binaries, so if you are using that I could maybe help you with that.
 
-
+```{bash}
+CLion CMake additional options
+-DQt6_DIR=C:/Qt/6.9.3/mingw_64/lib/cmake/Qt6 -DCMAKE_TOOLCHAIN_FILE=C:\Users\szymon\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PREFIX_PATH="C:\Qt\6.9.3\mingw_64"
+```
 
 ## Usage
 
