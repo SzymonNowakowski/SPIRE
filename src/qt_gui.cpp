@@ -1475,14 +1475,14 @@ void GUI::save_image_to_file(){
     
     if( draw_uc_control->isChecked() ){
       draw_unitcell( &qimg );
-    }
-    
-    img_data = sp->save_png_legend( img_data, qimg.width(), qimg.height(),
+    }img_data = sp->save_png_legend( img_data, qimg.width(), qimg.height(),
 				    invert_control->object()->isChecked()
 				    ? std::string("#ffffff") : std::string("#000000"),
 				    invert_control->object()->isChecked()
 				    ? std::string("#000000") : std::string("#ffffff"),
 				    filename.toStdString() , std::vector<std::string> (0,"") );
+    
+
     
     free( img_data );
     

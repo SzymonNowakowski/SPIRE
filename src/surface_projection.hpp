@@ -96,6 +96,27 @@ public:
   /// Destructor
   ~surface_projection();
 
+	/// Python binding function
+	static unsigned char* generate_image_from_parameter_set(
+		int structure_type = 1,      // 0 = gyroid, 1 = diamond, 2 = primitive, etc., consult the GUI
+		double uc_scale_ab = 1.0,    // unit cell scaling factor in a/b directions
+		double uc_scale_c  = 1.0,    // unit cell scaling factor along c axis
+		double channel_vol_prop = 0.5,   // target volume fraction of the channel (0–1)
+		double slice_width = 1.0,    // physical width of the slice
+		double slice_height = 1.0,   // physical height of the slice
+		double slice_thickness = 1.0,// physical thickness of the slice (projection depth)
+		double slice_position = 0.0, // relative position of the slice (0 = centered)
+		int h = 0,                   // Miller index h
+		int k = 1,                   // Miller index k
+		int l = 1,                   // Miller index l
+
+		int image_width = 256,             // number of horizontal pixels in the generated image
+		int image_height = 256,            // number of vertical pixels in the generated image
+		int image_depth = 76,        // sampling density along z-axis (higher = better quality, 76 provides reasonable quality)
+
+		const std::string& filename = "" // optional output filename; if empty, no file is written
+	);
+
   /// Recomputes the geometric slice properties
   void update_geometry();
 

@@ -20,18 +20,30 @@
 #include "qt_gui.hpp"
 #include "global_settings.hpp"
 
+#include "surface_projection.hpp"  //TODO: SZN changes
+
+
 int main( int argc, char *argv[]){
-  
-  QApplication app( argc, argv );
+    QApplication app( argc, argv );
 
-  QLocale default_locale = QLocale();
-		       
-  app.setWindowIcon(QIcon(":/resources/icon/icon.ico"));
+    QLocale default_locale = QLocale();
 
-  global_settings gs ( "global_settings.conf" );
-  GUI gui( &app, &default_locale, gs, time(NULL) );
-  gui.show();
-  
-  return app.exec();
+    app.setWindowIcon(QIcon(":/resources/icon/icon.ico"));
+
+    global_settings gs ( "global_settings.conf" );
+
+
+    printf("Start test...\n");
+
+    surface_projection::generate_image_from_parameter_set(1, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 0.0, 0, 1, 1, 256, 256, 76, "projection1.data");
+    surface_projection::generate_image_from_parameter_set(1, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 0.0, 1, 1, 1, 256, 256, 76, "projection2.data");
+    printf("Finished test.\n");
+
+    fflush(stdout);
+    //return 0;
+
+    GUI gui( &app, &default_locale, gs, time(NULL) );
+    gui.show();
+    return app.exec();
 
 }
