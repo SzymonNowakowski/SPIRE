@@ -128,14 +128,14 @@ void generate_spire_image(
   crystal.compute_projection();
 
   // Retrieve resulting image
-  unsigned char* img = crystal.get_image(true);
+  crystal.get_image(buffer, true);
 
   // Optional save
   if (!filename.empty()) {
     int width  = crystal.get_width();
     int height = crystal.get_height();
     std::ofstream out(filename, std::ios::binary);
-    out.write(reinterpret_cast<char*>(img), width * height);
+    out.write(reinterpret_cast<char*>(buffer), width * height);
     out.close();
   }
 }

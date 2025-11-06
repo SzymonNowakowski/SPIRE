@@ -165,6 +165,9 @@ public:
   /// Converts the \ref projection array in a rescaled image array
   unsigned char* get_image(bool invert = false, std::string scaling = "LIN");
 
+  /// Converts the \ref projection array in a rescaled image array in-place
+  void get_image(unsigned char* buffer, bool invert, std::string scaling = "LIN");
+
 #ifdef HAVE_PNG
   /// writes the current projection to a png image
   void save_to_png( std::string out_fn, bool invert = true, std::string scaling = "LIN");

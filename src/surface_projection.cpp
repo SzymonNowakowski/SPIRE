@@ -1190,38 +1190,71 @@ unsigned char* surface_projection::get_image(bool invert, std::string scaling){
   unsigned char* img = new unsigned char[ projection.size() ]();
   //(unsigned char*) malloc( sizeof(unsigned char) * projection.size() );
   
-  //find min and max value
-  float max= *std::max_element( projection.begin(), projection.end() );
-  float min= *std::min_element( projection.begin(), projection.end() );
-  
-  if( scaling == "LOG" ){
-    max = log( max + 1 );
-    min = log( min + 1 );    
-  }
-
-  //write image data
-  for(unsigned int ii=0; ii<projection.size(); ii++){
-    //scale
-    float pixel_val;
-    unsigned char u_scaled;
-
-    if( scaling == "LIN" ){
-      pixel_val = ((projection[ii] - min)/(max - min)*255);
-    } else if( scaling == "LOG" ){
-      pixel_val = log(projection[ii]+1);
-      pixel_val = ((pixel_val - min)/(max - min))*255;
-    }
-    u_scaled = static_cast<unsigned char>( pixel_val );
-      //invert
-    if(invert)
-      u_scaled = 255 - u_scaled;
-    //write in array
-    img[ii] = u_scaled;
-  }  
+  this->get_image(img, invert, scaling);
 
   return img;  
 }
 
+/**
+ * This function basically only converts the projection array to a
+ * rescaled array, where the minimal value is set to 0 and the maximum
+ * to 255. Also inverts if necessary.
+ *
+ * Operates in-place
+ */
+
+void surface_projection::get_image(unsigned char* buffer, bool invert, std::string scaling) {
+  // one pass for min & max
+  auto [min_it, max_it] = std::minmax_element(projection.begin(), projection.end());
+  float min = *min_it, max = *max_it;
+
+  const bool is_log = (scaling == "LOG");
+
+  // handle LOG bounds
+  if (is_log) {
+    // shift both ends by log(·+1)
+    min = std::log1pf(min);
+    max = std::log1pf(max);
+  }
+
+  // guard against degenerate range
+  float denom = max - min;
+  if (denom <= 0.0f) {
+    const unsigned char fill = invert ? 255u : 0u;
+    std::memset(buffer, fill, projection.size());
+    return;
+  }
+
+  // precompute scale and bias for y = (x - min) * (255 / (max - min))
+  const float scale = 255.0f / denom;
+  const float bias  = -min * scale;
+
+  //the loop gets rewritten to allow for compiler optimization
+
+  if (is_log)  //scaling == "LOG"
+  {
+    //write image data
+    for(unsigned int i=0; i<projection.size(); i++){
+      //scale
+      float pixel_val;
+      unsigned char u_scaled;
+      pixel_val = std::log1pf(projection[i]) * scale + bias;
+      u_scaled = static_cast<unsigned char>( pixel_val );
+      buffer[i] = invert?255 - u_scaled: u_scaled;
+    }
+  } else {   //scaling == "LIN"
+    //write image data
+    for(unsigned int i=0; i<projection.size(); i++){
+      //scale
+      float pixel_val;
+      unsigned char u_scaled;
+
+      pixel_val = projection[i] * scale + bias;
+      u_scaled = static_cast<unsigned char>( pixel_val );
+      buffer[i] = invert?255 - u_scaled: u_scaled;
+    }
+  }
+}
 
 #ifdef HAVE_PNG
 
