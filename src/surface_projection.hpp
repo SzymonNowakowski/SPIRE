@@ -161,9 +161,12 @@ public:
   /// Returns the distance map. Be careful if it is up to date. If in
   /// doubt, call \ref set_grid() to update it
   std::vector<float> get_distance_map() const;
-  
+
   /// Converts the \ref projection array in a rescaled image array
   unsigned char* get_image(bool invert = false, std::string scaling = "LIN");
+
+  /// Converts the \ref projection array in a rescaled image array, deprecated version to check that results are the same
+  unsigned char* get_image_deprecated(bool invert = false, std::string scaling = "LIN");
 
   /// Converts the \ref projection array in a rescaled image array in-place
   void get_image(unsigned char* buffer, bool invert, std::string scaling = "LIN");

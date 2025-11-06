@@ -97,7 +97,7 @@ void generate_spire_image(
     const std::string& filename  // optional output filename; if empty, no file is written
 ) {
   static global_settings gs("global_settings.conf" );
-  surface_projection crystal(gs);
+  surface_projection crystal(gs);   //TODO: time if it should be local or initiated once at the beginning, thread-safe way. Or maybe add a new constructor for all those parameters?
 
   crystal.set_n_points_x(image_width);
   crystal.set_n_points_y(image_height);

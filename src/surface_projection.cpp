@@ -1256,6 +1256,46 @@ void surface_projection::get_image(unsigned char* buffer, bool invert, std::stri
   }
 }
 
+//TODO: test for compatibility of those versions
+unsigned char* surface_projection::get_image_deprecated(bool invert, std::string scaling){
+
+  //new image array
+  unsigned char* img = new unsigned char[ projection.size() ]();
+  //(unsigned char*) malloc( sizeof(unsigned char) * projection.size() );
+
+  //find min and max value
+  float max= *std::max_element( projection.begin(), projection.end() );
+  float min= *std::min_element( projection.begin(), projection.end() );
+
+  if( scaling == "LOG" ){
+    max = log( max + 1 );
+    min = log( min + 1 );
+  }
+
+  //write image data
+  for(unsigned int ii=0; ii<projection.size(); ii++){
+    //scale
+    float pixel_val;
+    unsigned char u_scaled;
+
+    if( scaling == "LIN" ){
+      pixel_val = ((projection[ii] - min)/(max - min)*255);
+    } else if( scaling == "LOG" ){
+      pixel_val = log(projection[ii]+1);
+      pixel_val = ((pixel_val - min)/(max - min))*255;
+    }
+    u_scaled = static_cast<unsigned char>( pixel_val );
+    //invert
+    if(invert)
+      u_scaled = 255 - u_scaled;
+    //write in array
+    img[ii] = u_scaled;
+  }
+
+  return img;
+}
+
+
 #ifdef HAVE_PNG
 
 void surface_projection::save_to_png( std::string out_fn, bool invert, std::string scaling ){
