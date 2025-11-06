@@ -15,7 +15,9 @@ option(BUILD_BATCH_TOOL "Builds a tool to generate batches of projections" OFF)
 SET(SRC_BASE ./src/img_out.cpp ./src/surface_projection.cpp ./src/distance_transform.cpp ./src/homotopic_thinning.cpp ./src/iterable_voxel.cpp ./src/percolation_analysis.cpp ./src/batch_lib.cpp ./src/level_sets.cpp ./src/img_manip.cpp)
 
 #the source files for the QT gui
-SET(SRC_QT_GUI ./src/qt_gui.cpp ./src/qt_main.cpp ./src/qt_sp.cpp ./src/slice_orientation_visualisation.cpp ./src/drawme.cpp)
+SET(SRC_QT_GUI ./src/qt_gui.cpp ./src/qt_main.cpp ./src/qt_sp.cpp ./src/slice_orientation_visualisation.cpp ./src/drawme.cpp
+        src/spirepy.cpp
+        src/spirepy.h)
 
 #
 # external libraries
