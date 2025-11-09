@@ -11,6 +11,7 @@
 /**
  * This function returns an image recomputed with provided parameters
  * and optionally saves it
+ * TODO: address the compatibility of width, height, depth in pixels and physical widt/height/thickness proportion
  */
 void generate_spire_image(
     unsigned char* buffer,        //buffer to fill
@@ -36,8 +37,8 @@ void generate_spire_image(
     const std::string& filename  // optional output filename; if empty, no file is written
 ) {
   static global_settings gs("global_settings.conf" );
-  surface_projection crystal(gs);   //TODO: time if it should be local or initiated once at the beginning, thread-safe way. Or maybe add a new constructor for all those parameters?
-  static int count = 0;
+  thread_local surface_projection crystal(gs);   //thread_local is about 2% faster than the full local version which reinitiates the object at each call
+
   crystal.set_n_points_x(image_width);
   crystal.set_n_points_y(image_height);
   crystal.set_n_points_z(image_depth);   // responsible for image quality
@@ -67,27 +68,7 @@ void generate_spire_image(
   crystal.compute_projection();
 
   // Retrieve resulting image
-  crystal.get_image(buffer, true, "LOG");
-  unsigned char *buffer1 = crystal.get_image_deprecated(true, "LOG");
-  // --- Compare buffer and buffer1 ---
-  size_t total = crystal.get_projection().size();  // lub znana szerokość*wysokość
-
-  for (size_t i = 0; i < total; ++i) {
-      if (buffer[i] != buffer1[i])
-      {
-          count++;
-          printf("Found %d in i=%d, %d<>%d !!!!\n", count, i, buffer[i], buffer1[i]);
-          printf("structure_type=%d\n", structure_type);
-          printf("uc_scale_ab=%.4f, uc_scale_c=%.4f, channel_vol_prop=%.4f\n",
-                 uc_scale_ab, uc_scale_c, channel_vol_prop);
-          printf("slice_height=%.4f, slice_width=%.4f, slice_thickness=%.4f, slice_position=%.4f\n",
-                 slice_height, slice_width, slice_thickness, slice_position);
-          printf("h=%d, k=%d, l=%d\n", h, k, l);
-          printf("image_height=%d, image_width=%d, image_depth=%d\n",
-                 image_height, image_width, image_depth);
-      }
-  }
-  delete[] buffer1;
+  crystal.get_image(buffer, true);
 
   // Optional save
   if (!filename.empty()) {
