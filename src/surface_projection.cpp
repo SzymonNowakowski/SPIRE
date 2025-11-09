@@ -1200,11 +1200,12 @@ unsigned char* surface_projection::get_image(bool invert, std::string scaling){
  * rescaled array, where the minimal value is set to 0 and the maximum
  * to 255. Also inverts if necessary.
  *
- * Operates in-place
+ * Operates in-place. It is a rewrite of the original routine (now: get_image_deprecated) and is about 1% faster
  */
 
 void surface_projection::get_image(unsigned char* buffer, bool invert, std::string scaling) {
   // one pass for min & max
+  //printf("projection.size() in get_image() = %zu\n", projection.size());
   auto [min_it, max_it] = std::minmax_element(projection.begin(), projection.end());
   float min = *min_it, max = *max_it;
 
@@ -1256,9 +1257,45 @@ void surface_projection::get_image(unsigned char* buffer, bool invert, std::stri
   }
 }
 
-//TODO: test for compatibility of those versions
-unsigned char* surface_projection::get_image_deprecated(bool invert, std::string scaling){
+/** The deprecated version tested for compatybility with the regular version. The test performed was the following
+* for (int t = 0; t < 100; ++t) {
+        generate_spire_image_test(
+        buffer,
+        rand() % 3,                                // structure_type ∈ {0,1,2}
+        0.8 + 0.4 * ((double)rand() / RAND_MAX),   // uc_scale_ab
+        0.8 + 0.4 * ((double)rand() / RAND_MAX),   // uc_scale_c
+        0.3 + 0.4 * ((double)rand() / RAND_MAX),   // channel_vol_prop
+        1.0,   // slice_height
+        1.0,   // slice_width
+        0.8 + 0.4 * ((double)rand() / RAND_MAX),   // slice_thickness
+        -1.0 + 2.0 * ((double)rand() / RAND_MAX),  // slice_position ∈ [-1,1]
+        1 + rand() % 10,                           // h
+        1 + rand() % 10,                           // k
+        1 + rand() % 10,                           // l
+        256, 256, 76, ""
+    );
+* the generate_spire_image_test routine would do the test along the following lines
+        ........
+    crystal.update_geometry();
+    crystal.compute_projection();
 
+    // Retrieve resulting image
+    crystal.get_image(buffer, true, scaling);
+    unsigned char *buffer1 = crystal.get_image_deprecated(true, scaling);
+    // --- Compare buffer and buffer1 ---
+    size_t total = crystal.get_projection().size();  //
+
+    for (size_t i = 0; i < total; ++i) {
+        if (buffer[i] != buffer1[i]) //mismatch detected!!
+         ........
+* 100*256*256 unsigned char positions were compared,
+* for LIN scaling only in 13 positions (roughly 2e-4 percent of cases!) there was a mismatch,
+* for LOG scaling only in 46 positions (roughly 7e-4 percent of cases!) there was a mismatch,
+* in all 59 cases between values of 0 (buffer1) and 1 (buffer) - an underflow rounding error.
+*/
+
+unsigned char* surface_projection::get_image_deprecated(bool invert, std::string scaling){
+  //printf("projection.size() in get_image_deprecated() = %zu\n", projection.size());
   //new image array
   unsigned char* img = new unsigned char[ projection.size() ]();
   //(unsigned char*) malloc( sizeof(unsigned char) * projection.size() );
