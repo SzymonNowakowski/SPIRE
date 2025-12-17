@@ -1202,7 +1202,6 @@ unsigned char* surface_projection::get_image(bool invert, std::string scaling){
  *
  * Operates in-place. It is a rewrite of the original routine (now: get_image_deprecated) and is about 1% faster
  */
-
 void surface_projection::get_image(unsigned char* buffer, bool invert, std::string scaling) {
   // one pass for min & max
   //printf("projection.size() in get_image() = %zu\n", projection.size());
@@ -1257,7 +1256,7 @@ void surface_projection::get_image(unsigned char* buffer, bool invert, std::stri
   }
 }
 
-/** The deprecated version tested for compatybility with the regular version. The test performed was the following
+/** The deprecated version tested for compatibility with the regular version. The test performed was the following
 * for (int t = 0; t < 100; ++t) {
         generate_spire_image_test(
         buffer,
@@ -1293,7 +1292,6 @@ void surface_projection::get_image(unsigned char* buffer, bool invert, std::stri
 * for LOG scaling only in 46 positions (roughly 7e-4 percent of cases!) there was a mismatch,
 * in all 59 cases between values of 0 (buffer1) and 1 (buffer) - an underflow rounding error.
 */
-
 unsigned char* surface_projection::get_image_deprecated(bool invert, std::string scaling){
   //printf("projection.size() in get_image_deprecated() = %zu\n", projection.size());
   //new image array
