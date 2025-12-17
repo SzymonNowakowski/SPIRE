@@ -11,7 +11,6 @@
 /**
  * This function returns an image recomputed with provided parameters
  * and optionally saves it
- * TODO: address the compatibility of width, height, depth in pixels and physical widt/height/thickness proportion
  */
 void generate_spire_image(
     unsigned char* buffer,        //buffer to fill
@@ -20,11 +19,11 @@ void generate_spire_image(
     double uc_scale_c,           // unit cell scaling factor along c axis
     double channel_vol_prop,     // target volume fraction of the channel (0–1)
 
-    double slice_height,         // physical height of the slice
-    double slice_width,          // physical width of the slice
+    double slice_height,         // physical height of the slice [UC]
+    double slice_width,          // physical width of the slice  [UC]
 
-    double slice_thickness,      // physical thickness of the slice (projection depth)
-    double slice_position,       // relative position of the slice (0 = centered)
+    double slice_thickness,      // physical thickness of the slice (projection depth) [in proportion to UC]
+    double slice_position,       // relative position of the slice (0 = centered)      [in proportion to UC]
     int h,                       // Miller index h
     int k,                       // Miller index k
     int l,                       // Miller index l
@@ -32,7 +31,7 @@ void generate_spire_image(
     int image_height,            // number of vertical pixels
     int image_width,             // number of horizontal pixels
 
-    int image_depth,             // sampling density along z (e.g., 76 is reasonable)
+    int image_depth,             // sampling density along z (e.g., 75 is reasonable)
 
     const std::string& filename  // optional output filename; if empty, no file is written
 ) {
@@ -66,6 +65,18 @@ void generate_spire_image(
   // Geometry update + projection
   crystal.update_geometry();
   crystal.compute_projection();
+
+  //before we fill out the buffer, we check the allocated buffer (width x height) matches the projection buffer size expectations:
+  if (crystal.get_projection().size() != image_height * image_width) {
+      int true_w = crystal.get_width();
+      int true_h = crystal.get_height();
+      throw std::runtime_error(
+          "Projection resolution mismatch: expected " +
+          std::to_string(image_width) + "x" + std::to_string(image_height) +
+          " but SPIRE computed " + std::to_string(true_w) + "x" + std::to_string(true_h)
+      );
+  }
+
 
   // Retrieve resulting image
   crystal.get_image(buffer, true);
