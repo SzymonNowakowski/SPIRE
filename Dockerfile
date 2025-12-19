@@ -34,27 +34,23 @@ RUN cmake --build build --parallel $(nproc)
 
 # ----------------------------------------------------------
 # 4. Install spirepy *.so module into Python site-packages
-#  Note there is only Python 3.10 in this base image. Also, spirepy.so is symlinked to spirepy310.so
 # ----------------------------------------------------------
 RUN python3 - <<EOF
 import site, glob, shutil, os
 
 sd = site.getsitepackages()[0]
 
-# Find versioned module (spirepy312.so)
-so = glob.glob("/opt/spire/build/spirepy312.so")[0]
+# find the python-generated module name, whatever it is
+matches = glob.glob("/opt/spire/build/spirepy*.so")
+if not matches:
+    raise SystemExit("NO spirepy .so FOUND in /opt/spire/build — build failed")
 
-# Install as spirepy312.so
-dst1 = os.path.join(sd, os.path.basename(so))
-shutil.copy2(so, dst1)
+src = matches[0]
 
-# Create generic symlink: spirepy.so -> spirepy312.so
-dst2 = os.path.join(sd, "spirepy.so")
-if not os.path.exists(dst2):
-    os.symlink(os.path.basename(dst1), dst2)
+dst = os.path.join(sd, "spirepy.so")
+shutil.copy2(src, dst)
 
-print("Installed:", dst1)
-print("Symlink:", dst2)
+print("Installed:", dst)
 EOF
 
 

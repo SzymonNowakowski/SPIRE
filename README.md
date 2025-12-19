@@ -6,6 +6,65 @@ License: GPLv3
 
 ## Install
 
+### Docker Container
+
+A pre-built docker container with the `spirepy` Python module is available on DockerHub:
+
+```bash
+docker pull snowakowski/spirepy:latest
+```
+
+or you can consider downloading the dated tag with an explicit predefined Ubuntu and Python versions:
+
+```bash
+docker pull snowakowski/spirepy:U24.04.3_P3.12_20251219
+```
+
+For building it yourself from the provided Dockerfile:
+
+```bash
+docker build -t spirepy:latest .
+```
+
+#### Usage Examples
+
+- Run a height calculation:
+
+    ```bash
+    docker run --rm snowakowski/spirepy:latest \
+    bash -c 'python3 - <<EOF 2>/dev/null
+    import spirepy
+    print("H =", spirepy.compute_height(2.0, 2.0, 256))
+    EOF'
+    ```
+
+- Generate an image buffer and show information about it:
+
+    ```bash
+    docker run --rm snowakowski/spirepy:latest \
+    bash -c 'python3 - <<EOF
+    import numpy as np, spirepy
+    
+    W = 256
+    H = spirepy.compute_height(2.0, 2.0, W)
+    
+    buf = np.empty((H, W), dtype=np.uint8)
+    spirepy.generate_spire_image(
+        buf,
+        1, 1.0, 1.0, 0.5,
+        2.0, 2.0,
+        1.0, 0.0,
+        0, 1, 1,
+        H, W,
+        76,
+        ""
+    )
+    
+    print("Image shape:", buf.shape)
+    print("First pixels:", buf.flatten()[:16])
+    EOF'
+    ```
+
 ### Linux/Unix (and also Mac)
 
 This software uses CMake as build system. To build from the sources, following packages are needed:
@@ -41,6 +100,7 @@ There are some options to be used with the cmake command to be considered:
 
 ```-DBUILD_BATCH_TOOL=ON(OFF)``` build the batch tool for command line
 
+```-DBUILD_SPIRE_PY=ON(OFF)``` build the `spirepy` python module
 
 
 
@@ -59,7 +119,7 @@ The sources can also be compiled in CLion using MinGW.
 
 These are the basic options (below, you can also use `OFF` instead of `ON`):
 ```{bash}
---DBUILD_QT_GUI=ON -DBUILD_BATCH_TOOL=ON
+--DBUILD_QT_GUI=ON -DBUILD_BATCH_TOOL=ON -DBUILD_SPIRE_PY=ON
 ```
 
 These additional options are required. They should follow the following template:
