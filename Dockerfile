@@ -41,14 +41,14 @@ import site, glob, shutil, os
 
 sd = site.getsitepackages()[0]
 
-# Find versioned module (spirepy310.so)
-so = glob.glob("/opt/spire/build/spirepy3*.so")[0]
+# Find versioned module (spirepy312.so)
+so = glob.glob("/opt/spire/build/spirepy312.so")[0]
 
-# Install as spirepy310.so
+# Install as spirepy312.so
 dst1 = os.path.join(sd, os.path.basename(so))
 shutil.copy2(so, dst1)
 
-# Create generic symlink: spirepy.so -> spirepy310.so
+# Create generic symlink: spirepy.so -> spirepy312.so
 dst2 = os.path.join(sd, "spirepy.so")
 if not os.path.exists(dst2):
     os.symlink(os.path.basename(dst1), dst2)

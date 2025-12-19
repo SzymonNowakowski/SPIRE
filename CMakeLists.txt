@@ -356,13 +356,11 @@ if(BUILD_SPIRE_PY)
           "C:/Users/$ENV{USERNAME}/AppData/Local/Programs/Python/Python314/python.exe"
           "C:/Python314/python.exe")
 
-  set(_LINUX_PY310_HINTS "/usr/bin/python3.10" "/usr/local/bin/python3.10")
   set(_LINUX_PY312_HINTS "/usr/bin/python3.12" "/usr/local/bin/python3.12")
   set(_LINUX_PY313_HINTS "/usr/bin/python3.13" "/usr/local/bin/python3.13")
   set(_LINUX_PY314_HINTS "/usr/bin/python3.14" "/usr/local/bin/python3.14")
 
   # Add versioned targets: spirepy312, spirepy313, spirepy314 (3.14 is the newest stable)
-  _add_spirepy_for("3.10" spirepy310 WIN_HINTS ${_WIN_PY312_HINTS} LINUX_HINTS ${_LINUX_PY312_HINTS})
   _add_spirepy_for("3.12" spirepy312 WIN_HINTS ${_WIN_PY312_HINTS} LINUX_HINTS ${_LINUX_PY312_HINTS})
   _add_spirepy_for("3.13" spirepy313 WIN_HINTS ${_WIN_PY313_HINTS} LINUX_HINTS ${_LINUX_PY313_HINTS})
   _add_spirepy_for("3.14" spirepy314 WIN_HINTS ${_WIN_PY314_HINTS} LINUX_HINTS ${_LINUX_PY314_HINTS})
