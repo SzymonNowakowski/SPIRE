@@ -1,5 +1,5 @@
 #include "img_manip.hpp"
-
+#include <thread>          // std::this_thread::get_id
 
 image_manipulation::image_manipulation(){
 
@@ -10,6 +10,29 @@ double symm_gaussian_2D( double x, double y, double sigma ){
   
   return (1.0/( 2 * M_PI * sigma * sigma ) ) * exp( -(x*x + y*y) / (2*sigma*sigma)   );
   
+}
+
+void normalize_to_uchar255(const short* src, unsigned char* dst, size_t count) {
+    short min_val = SHRT_MAX;
+    short max_val = SHRT_MIN;
+
+    // find min/max
+    for (size_t i = 0; i < count; ++i) {
+        if (src[i] < min_val) min_val = src[i];
+        if (src[i] > max_val) max_val = src[i];
+    }
+
+    if (max_val == min_val) {
+        memset(dst, 128, count);
+        return;
+    }
+
+    float scale = 255.0f / float(max_val - min_val);
+
+    // rescale
+    for (size_t i = 0; i < count; ++i) {
+        dst[i] = (unsigned char)((src[i] - min_val) * scale);
+    }
 }
 
 
@@ -89,32 +112,26 @@ void image_manipulation::gaussian_blur( unsigned char* img, unsigned int width, 
 
 void image_manipulation::gaussian_noise( unsigned char* img, unsigned int width, unsigned int height, double magnitude ){
   
-  // bring in the random numbers
-  std::mt19937 generator;
-  auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-  generator.seed( seed );
+  /// bitwise XOR mixes several independent seed sources (true entropy, thread id,
+  // and high-resolution timestamp), producing a unique per-thread seed and
+  // avoiding collisions even if one source is weak
+  static thread_local std::mt19937 generator(
+      std::random_device{}() ^
+      (std::mt19937::result_type)std::hash<std::thread::id>{}(std::this_thread::get_id()) ^
+      (std::mt19937::result_type)std::chrono::high_resolution_clock::now().time_since_epoch().count()
+  );
+
   std::normal_distribution<double> dist (0, 1.0/6.0);
 
-  // create a new image
+  // create a new image, but not unsigned char - based, but rather short based
+  // to avoid overflow/underflow when adding noise
   short *noisy_img = new short[width*height]();
   
   for( unsigned int ii=0; ii< width*height; ii++){
     noisy_img[ii] = img[ii] + static_cast<short>( dist(generator) * magnitude);
   }
 
-  //rescale
-  short min=0, max=0;
-  for( unsigned int i=0; i < width*height; i++){
-    if( noisy_img[i] > max )
-      max = noisy_img[i];
-    if( noisy_img[i] < min )
-      min = noisy_img[i];
-  }
-
-  
-  for( unsigned int i=0; i < width*height; i++){
-    img[i] = (unsigned char) (((float)noisy_img[i] - min) / (max - min) * 255.0);    
-  }
+  normalize_to_uchar255(noisy_img, img, width*height);
 
   delete[] (noisy_img);
 }
@@ -127,10 +144,14 @@ void image_manipulation::add_grains( unsigned char* img, unsigned int width, uns
 				     int grain_number_center, int grain_number_width,
 				     double magnitude ){
   
-  // bring in the random numbers
-  std::mt19937 generator;
-  auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-  generator.seed( seed );
+  // bitwise XOR mixes several independent seed sources (true entropy, thread id,
+  // and high-resolution timestamp), producing a unique per-thread seed and
+  // avoiding collisions even if one source is weak
+  static thread_local std::mt19937 generator(
+      std::random_device{}() ^
+      (std::mt19937::result_type)std::hash<std::thread::id>{}(std::this_thread::get_id()) ^
+      (std::mt19937::result_type)std::chrono::high_resolution_clock::now().time_since_epoch().count()
+  );
 
   std::normal_distribution<double> dist (0, 1.0/6.0);
 
@@ -181,20 +202,8 @@ void image_manipulation::add_grains( unsigned char* img, unsigned int width, uns
       }
     }
   }
-  
 
-  //rescale
-  short min=0, max=0;
-  for( unsigned int i=0; i < width*height; i++){
-    if( noisy_img[i] > max )
-      max = noisy_img[i];
-    if( noisy_img[i] < min )
-      min = noisy_img[i];
-  }
-
-  for( unsigned int i=0; i < width*height; i++){
-    img[i] = (unsigned char) (((float)noisy_img[i] - min) / (max - min) * 255.0);    
-  }
+  normalize_to_uchar255(noisy_img, img, width*height);
 
   delete[] (noisy_img);
 }
@@ -212,10 +221,15 @@ unsigned char* image_manipulation::create_grains( unsigned int width, unsigned i
 					  int grain_number_center, int grain_number_width,
 					  double magnitude ){
   
-  // bring in the random numbers
-  std::mt19937 generator;
-  auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-  generator.seed( seed );
+
+  // bitwise XOR mixes several independent seed sources (true entropy, thread id,
+  // and high-resolution timestamp), producing a unique per-thread seed and
+  // avoiding collisions even if one source is weak
+  static thread_local std::mt19937 generator(
+ 	std::random_device{}() ^
+	(std::mt19937::result_type)std::hash<std::thread::id>{}(std::this_thread::get_id()) ^
+	(std::mt19937::result_type)std::chrono::high_resolution_clock::now().time_since_epoch().count()
+  );
 
   std::normal_distribution<double> dist (0, 1.0/6.0);
 
@@ -264,26 +278,12 @@ unsigned char* image_manipulation::create_grains( unsigned int width, unsigned i
     }
   }
 
-
-  //rescale
-  short min=0, max=0;
-  for( unsigned int i=0; i < width*height; i++){
-    if( noisy_img[i] > max )
-      max = noisy_img[i];
-    if( noisy_img[i] < min )
-      min = noisy_img[i];
-  }
-
   unsigned char *img = new unsigned char[width*height]();
-  
-  for( unsigned int i=0; i < width*height; i++){
-    img[i] = (unsigned char) (((float)noisy_img[i] - min) / (max - min) * 255.0);    
-  }
 
+  normalize_to_uchar255(noisy_img, img, width*height);
 
   delete[]( noisy_img );
 
-  
   return img;
 }
 
@@ -302,26 +302,15 @@ void image_manipulation::add_images( unsigned char* rhs, unsigned char* lhs,
 				     unsigned char* dest ){
   
   
-  unsigned short max=0, min=255;
 
-  
-  unsigned short *tmp_img = new unsigned short[width*height]();
+  short *tmp_img = new short[width*height]();
   
   for( unsigned int ii=0; ii< width*height; ii++){    
     tmp_img[ii] = rhs_weight * rhs[ii] + lhs_weight * lhs[ii];
-    
-    if( tmp_img[ii] > max )
-	max = tmp_img[ii];
-    
-    if( tmp_img[ii] < min )
-      min = tmp_img[ii];
   }
 
+  normalize_to_uchar255(tmp_img, dest, width * height);
 
-  for( unsigned int ii=0; ii< width*height; ii++){
-    dest[ii] = (unsigned char) (((float)tmp_img[ii] - min) / (max - min) * 255.0 );
-  }
-  
   delete[](tmp_img);  
 }
 
