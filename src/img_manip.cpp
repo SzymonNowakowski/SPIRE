@@ -138,84 +138,39 @@ void image_manipulation::gaussian_noise( unsigned char* img, unsigned int width,
 
 
 
+/* add_grains is never called throughout the codebase, but is
+ * just available
+ * what gets called is create_grains and then the created grains are added with add_images
+ * so I will change its signature, rewrite it in terms of create_grains and add_images
+ * and reuse it for spirepy
+ */
+void image_manipulation::add_grains( unsigned char* img,
+									 unsigned int width, unsigned int height,
+									 int grain_size_center, int grain_size_width,
+									 int grain_number_center, int grain_number_width,
+									 double magnitude,
+									 double original_image_proportion )
+{
+	// Create a grain image using the existing grain generator
+	unsigned char* grains = create_grains( width, height,
+										   grain_size_center, grain_size_width,
+										   grain_number_center, grain_number_width,
+										   magnitude );
 
-void image_manipulation::add_grains( unsigned char* img, unsigned int width, unsigned int height,
-				     int grain_size_center, int grain_size_width,
-				     int grain_number_center, int grain_number_width,
-				     double magnitude ){
-  
-  // bitwise XOR mixes several independent seed sources (true entropy, thread id,
-  // and high-resolution timestamp), producing a unique per-thread seed and
-  // avoiding collisions even if one source is weak
-  static thread_local std::mt19937 generator(
-      std::random_device{}() ^
-      (std::mt19937::result_type)std::hash<std::thread::id>{}(std::this_thread::get_id()) ^
-      (std::mt19937::result_type)std::chrono::high_resolution_clock::now().time_since_epoch().count()
-  );
+	// Combine original + grains into img using add_images
+	add_images( img,                  // rhs source
+				grains,               // lhs source
+				original_image_proportion,
+				1.0 - original_image_proportion,
+				width, height,
+				img );                // write back into img
 
-  std::normal_distribution<double> dist (0, 1.0/6.0);
-
-  std::uniform_int_distribution<int> uniform_w (0, width);
-  std::uniform_int_distribution<int> uniform_h (0, height);
-
-  std::normal_distribution<double> grain_number_dist (grain_number_center, grain_number_width);
-  std::normal_distribution<double> grain_size_dist (grain_size_center, grain_size_width);  
-  
-  // create a new image and copy data
-  short *noisy_img = new short[width*height]();
-  for( unsigned int i=0; i<width*height; i++){
-    noisy_img[i] = img[i];
-  }
-  
-  unsigned int N = grain_number_dist( generator );
-  
-  for( unsigned int ii=0; ii < N; ii++){
-
-    int grain_size = std::abs( grain_size_dist( generator ) );
-    
-    // pick a random location on the image
-    int cx = uniform_w( generator );
-    int cy = uniform_h( generator );
-    
-    //pick a random intensity
-    double intensity = magnitude * dist( generator );
-    
-    for( int yy=-grain_size; yy <= grain_size; yy++ ){
-      int xb = sqrt( grain_size*grain_size - yy*yy );
-      for( int xx = -xb; xx<=xb; xx++){
-
-	int ind_x = cx + xx;
-	int ind_y = cy + yy;
-
-	while( ind_x < 0 )
-	  ind_x += width;
-	while( ind_x >= width )
-	  ind_x -= width;
-	while( ind_y < 0 )
-	  ind_y += height;
-	while( ind_y >= height )
-	  ind_y -= height;
-
-	int ind = ind_x + ind_y * width;	
-
-	noisy_img[ind] += intensity;
-      }
-    }
-  }
-
-  normalize_to_uchar255(noisy_img, img, width*height);
-
-  delete[] (noisy_img);
+	// cleanup
+	delete[] grains;
 }
 
 
-
-
-
-
-/*
- * this is not very nice, since this a lot of copy&paste from the code above
- */
+// basic function to create grains
 unsigned char* image_manipulation::create_grains( unsigned int width, unsigned int height,
 					  int grain_size_center, int grain_size_width,
 					  int grain_number_center, int grain_number_width,
@@ -286,12 +241,6 @@ unsigned char* image_manipulation::create_grains( unsigned int width, unsigned i
 
   return img;
 }
-
-
-
-
-
-
 
 
 

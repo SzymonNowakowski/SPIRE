@@ -67,11 +67,12 @@ public:
    * \param[in] grain_number_center The center of the normal distribution for grain_number
    * \param[in] grain_number_width The standard deviation of the normal distribution for grain_number
    * \param[in] magnitude The intensity of the grains
+   * \param[in] original_image_proportion The proportion of the original image in the final image (0.0-1.0)
    */
   static void add_grains( unsigned char* img, unsigned int width, unsigned int height,
 			  int grain_size_center, int grain_size_width,
 			  int grain_number_center, int grain_number_width,
-			  double magnitude );
+			  double magnitude, double original_image_proportion );
 
 
 

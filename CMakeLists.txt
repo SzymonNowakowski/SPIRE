@@ -132,6 +132,9 @@ if( BUILD_BATCH_TOOL )
 
   add_executable(SPIRE_batch_tool ${SRC_BASE} ${SRC_IML} ./src/batch_tool.cpp resources.qrc)
 
+  find_package(Qt6 COMPONENTS Core REQUIRED)
+  target_link_libraries(SPIRE_batch_tool Qt6::Core)
+
   # Ensure include priority: system/OpenBLAS first, then IML fallback
   if(CBLAS_INCLUDE_DIR)
     target_include_directories(SPIRE_batch_tool PRIVATE ${CBLAS_INCLUDE_DIR})
