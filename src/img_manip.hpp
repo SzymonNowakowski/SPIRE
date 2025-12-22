@@ -72,7 +72,7 @@ public:
   static void add_grains( unsigned char* img, unsigned int width, unsigned int height,
 			  int grain_size_center, int grain_size_width,
 			  int grain_number_center, int grain_number_width,
-			  double magnitude, double original_image_proportion );
+			  double magnitude, double blur_kernel_size, double original_image_proportion );
 
 
 

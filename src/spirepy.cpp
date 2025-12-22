@@ -271,10 +271,11 @@ void py_add_gaussian_noise(py::array_t<uint8_t> buffer,
  * \param[in]     image_height             Expected height of the image in pixels.
  * \param[in]     image_width              Expected width of the image in pixels.
  * \param[in]     grain_size_center        Mean grain size in pixels.
- * \param[in]     grain_size_width         Spread (variance parameter) of the grain-size distribution.
+ * \param[in]     grain_size_stdev         Width (stdev parameter) of the grain-size distribution.
  * \param[in]     grain_number_center      Mean number of grains.
- * \param[in]     grain_number_width       Spread (variance parameter) of the grain-count distribution.
+ * \param[in]     grain_number_stdev       Width (stdev parameter) of the grain-count distribution.
  * \param[in]     magnitude                Scaling factor controlling grain intensity.
+ * \param[in]     blur_kernel_size         Kernel size for blur of the grains image.
  * \param[in]     original_image_proportion Blend factor controlling preservation of the original image.
  *
  * \throws std::runtime_error If the buffer is not 2D, is not dtype uint8,
@@ -284,10 +285,11 @@ void py_add_grains(py::array_t<uint8_t> buffer,
                    int image_height,
                    int image_width,
                    int grain_size_center,
-                   int grain_size_width,
+                   int grain_size_stdev,
                    int grain_number_center,
-                   int grain_number_width,
+                   int grain_number_stdev,
                    double magnitude,
+                   double blur_kernel_size,
                    double original_image_proportion)
 {
     uint8_t* ptr = extract_uint8_buffer_2d(buffer, image_height, image_width);
@@ -296,10 +298,10 @@ void py_add_grains(py::array_t<uint8_t> buffer,
                                    static_cast<unsigned int>(image_width),
                                    static_cast<unsigned int>(image_height),
                                    grain_size_center,
-                                   grain_size_width,
+                                   grain_size_stdev,
                                    grain_number_center,
-                                   grain_number_width,
-                                   magnitude,
+                                   grain_number_stdev,
+                                   magnitude, blur_kernel_size,
                                    original_image_proportion);
 }
 
@@ -505,16 +507,17 @@ m.def(
     py::arg("width"),
     py::arg("height"),
     py::arg("grain_size_center"),
-    py::arg("grain_size_width"),
+    py::arg("grain_size_stdev"),
     py::arg("grain_number_center"),
-    py::arg("grain_number_width"),
+    py::arg("grain_number_stdev"),
     py::arg("magnitude"),
+    py::arg("blur_kernel_size"),
     py::arg("original_image_proportion"),
     R"doc(
 Add random grain-like structures to an image.
 
 This function perturbs a grayscale image by inserting randomly sized and
-randomly placed “grains,” useful for synthetic augmentation or degradation
+randomly placed “grains” (additionally blurred) useful for synthetic augmentation or degradation
 effects mirroring behaviour of electron microscopy artefacts. All modifications occur in-place.
 
 Parameters
@@ -529,12 +532,14 @@ grain_size_center : int
     Mean grain size in pixels.
 grain_size_width : int
     Spread (variance parameter) for grain size.
-grain_number_center : int
+grain_number_stdev : int
     Mean number of grains inserted.
-grain_number_width : int
+grain_number_stdev : int
     Spread (variance parameter) for grain count.
 magnitude : float
     Strength of the grain effect.
+blur_kernel_size : float
+    Kernel size for blur of the grains image.
 original_image_proportion : float
     Blend factor controlling how much of the original image is preserved.
 

@@ -148,7 +148,7 @@ void image_manipulation::add_grains( unsigned char* img,
 									 unsigned int width, unsigned int height,
 									 int grain_size_center, int grain_size_width,
 									 int grain_number_center, int grain_number_width,
-									 double magnitude,
+									 double magnitude, double blur_kernel_size,
 									 double original_image_proportion )
 {
 	// Create a grain image using the existing grain generator
@@ -156,6 +156,10 @@ void image_manipulation::add_grains( unsigned char* img,
 										   grain_size_center, grain_size_width,
 										   grain_number_center, grain_number_width,
 										   magnitude );
+
+
+	//Add blur to the grain image
+	gaussian_blur( grains, width, height, blur_kernel_size );
 
 	// Combine original + grains into img using add_images
 	add_images( img,                  // rhs source

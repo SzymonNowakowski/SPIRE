@@ -30,24 +30,51 @@ docker build -t spirepy:latest .
 
 - Run a height calculation:
 
-    ```bash
-    docker run --rm snowakowski/spirepy:latest \
-    bash -c 'python3 - <<EOF 2>/dev/null
-    import spirepy
-    print("H =", spirepy.compute_height(2.0, 2.0, 256))
-    EOF'
-    ```
+  ```bash
+  docker run --rm snowakowski/spirepy:latest \
+  bash -c 'python3 - <<EOF 2>/dev/null
+  import spirepy
+  print("H =", spirepy.compute_height(2.0, 2.0, 256))
+  EOF'
+  ```
 
 - Generate an image buffer and show information about it:
 
-    ```bash
+  ```bash
+  docker run --rm snowakowski/spirepy:latest \
+  bash -c 'python3 - <<EOF
+  import numpy as np, spirepy
+  
+  W = 256
+  H = spirepy.compute_height(2.0, 2.0, W)
+  
+  buf = np.empty((H, W), dtype=np.uint8)
+  spirepy.generate_spire_image(
+      buf,
+      1, 1.0, 1.0, 0.5,
+      2.0, 2.0,
+      1.0, 0.0,
+      0, 1, 1,
+      H, W,
+      76,
+      ""
+  )
+  
+  print("Image shape:", buf.shape)
+  print("First pixels:", buf.flatten()[:16])
+  EOF'
+  ```
+- Generate and image and apply algorithmic distortions:
+  - **Blur**
+
+    ```{bash}
     docker run --rm snowakowski/spirepy:latest \
     bash -c 'python3 - <<EOF
     import numpy as np, spirepy
-    
+
     W = 256
     H = spirepy.compute_height(2.0, 2.0, W)
-    
+  
     buf = np.empty((H, W), dtype=np.uint8)
     spirepy.generate_spire_image(
         buf,
@@ -59,12 +86,92 @@ docker build -t spirepy:latest .
         76,
         ""
     )
-    
-    print("Image shape:", buf.shape)
-    print("First pixels:", buf.flatten()[:16])
+  
+    print("Before blur:", buf.flatten()[:16])
+
+    spirepy.apply_gaussian_blur(
+    buf,
+    W, H,
+    7,   # kernel_size (odd)
+    )
+
+    print("After blur:", buf.flatten()[:16])
     EOF'
     ```
 
+  - **Noise**
+
+    ```bash
+    docker run --rm snowakowski/spirepy:latest \
+    bash -c 'python3 - <<EOF
+    import numpy as np, spirepy
+
+    W = 256
+    H = spirepy.compute_height(2.0, 2.0, W)
+  
+    buf = np.empty((H, W), dtype=np.uint8)
+    spirepy.generate_spire_image(
+        buf,
+        1, 1.0, 1.0, 0.5,
+        2.0, 2.0,
+        1.0, 0.0,
+        0, 1, 1,
+        H, W,
+        76,
+        ""
+    )
+  
+    print("Before noise:", buf.flatten()[:16])
+
+    spirepy.add_gaussian_noise(
+        buf,
+        W, H,
+        20.0   # magnitude (stddev)
+    )
+
+    print("After noise:", buf.flatten()[:16])
+    EOF'
+    ```
+
+  - **Grains**
+
+    ```bash
+    docker run --rm snowakowski/spirepy:latest \
+    bash -c 'python3 - <<EOF
+    import numpy as np, spirepy
+
+    W = 256
+    H = spirepy.compute_height(2.0, 2.0, W)
+  
+    buf = np.empty((H, W), dtype=np.uint8)
+    spirepy.generate_spire_image(
+        buf,
+        1, 1.0, 1.0, 0.5,
+        2.0, 2.0,
+        1.0, 0.0,
+        0, 1, 1,
+        H, W,
+        76,
+        ""
+    )
+  
+    print("Before grains:", buf.flatten()[:16])
+
+    spirepy.add_grains(
+        buf,
+        W, H,
+        50,   # grain_size_center
+        10,   # grain_size_std_dev
+        50,   # grain_number_center
+        1,    # grain_number_std_dev
+        30,   # magnitude
+        4,    # blur kernel size for grains image
+        0.5   # original_image_proportion
+    )
+
+    print("After grains:", buf.flatten()[:16])
+    EOF'
+    ```
 ### Linux/Unix (and also Mac)
 
 This software uses CMake as build system. To build from the sources, following packages are needed:
