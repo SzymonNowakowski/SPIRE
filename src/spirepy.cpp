@@ -122,7 +122,7 @@ static uint8_t* extract_uint8_buffer_2d(py::array_t<uint8_t>& buffer,
  *
  * \param[in]     image_depth       Sampling density along the z axis (e.g., 76).
  *
- * \param[in]     filename          Output filename. If empty, the image is not saved.
+ * \param[in]     filename          Output filename. If empty, or not provided, the image is not saved.
  *
  * \throws std::runtime_error       If the buffer is incorrectly sized or parameters are invalid.
  */
