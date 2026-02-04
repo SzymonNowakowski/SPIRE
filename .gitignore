@@ -36,3 +36,9 @@
 
 # doxygeon
 doc/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
