@@ -51,12 +51,17 @@ docker build -t spirepy:latest .
   buf = np.empty((H, W), dtype=np.uint8)
   spirepy.generate_spire_image(
       buf,
-      1, 1.0, 1.0, 0.5,
-      2.0, 2.0,
-      1.0, 0.0,
-      0, 1, 1, [0.0, 5.0],
-      H, W,
-      76,
+      1,          # structure type: diamond
+      1.0,        # unit cell scale factors
+      1,0,        # unit cell scale in Z direction (1.0) 
+      0.5,        # channel volume proportion
+      2.0, 2.0,   # slice height and width (image proportions)
+      1.0,        # slice thickness
+      0.0,        # slice position (slice shift)
+      0, 1, 1,    # h, k, l
+      [0.0, 5.0], # membrane distance and width
+      H, W,       # image height and width, should keep image proportion specified by slice height and width
+      76,         # image quality (voxels along Z axis)
       ""
   )
   
@@ -78,12 +83,17 @@ docker build -t spirepy:latest .
     buf = np.empty((H, W), dtype=np.uint8)
     spirepy.generate_spire_image(
         buf,
-        1, 1.0, 1.0, 0.5,
-        2.0, 2.0,
-        1.0, 0.0,
-        0, 1, 1, [0.0, 5.0],
-        H, W,
-        76,
+        1,          # structure type: diamond
+        1.0,        # unit cell scale factors
+        1,0,        # unit cell scale in Z direction (1.0) 
+        0.5,        # channel volume proportion
+        2.0, 2.0,   # slice height and width (image proportions)
+        1.0,        # slice thickness
+        0.0,        # slice position (slice shift)
+        0, 1, 1,    # h, k, l
+        [0.0, 5.0], # membrane distance and width
+        H, W,       # image height and width, should keep image proportion specified by slice height and width
+        76,         # image quality (voxels along Z axis)
         ""
     )
   
@@ -112,12 +122,17 @@ docker build -t spirepy:latest .
     buf = np.empty((H, W), dtype=np.uint8)
     spirepy.generate_spire_image(
         buf,
-        1, 1.0, 1.0, 0.5,
-        2.0, 2.0,
-        1.0, 0.0,
-        0, 1, 1, [0.0, 5.0],
-        H, W,
-        76,
+        1,          # structure type: diamond
+        1.0,        # unit cell scale factors
+        1,0,        # unit cell scale in Z direction (1.0) 
+        0.5,        # channel volume proportion
+        2.0, 2.0,   # slice height and width (image proportions)
+        1.0,        # slice thickness
+        0.0,        # slice position (slice shift)
+        0, 1, 1,    # h, k, l
+        [0.0, 5.0], # membrane distance and width
+        H, W,       # image height and width, should keep image proportion specified by slice height and width
+        76,         # image quality (voxels along Z axis)
         ""
     )
   
@@ -146,12 +161,17 @@ docker build -t spirepy:latest .
     buf = np.empty((H, W), dtype=np.uint8)
     spirepy.generate_spire_image(
         buf,
-        1, 1.0, 1.0, 0.5,
-        2.0, 2.0,
-        1.0, 0.0,
-        0, 1, 1, [0.0, 5.0],
-        H, W,
-        76,
+        1,          # structure type: diamond
+        1.0,        # unit cell scale factors
+        1,0,        # unit cell scale in Z direction (1.0) 
+        0.5,        # channel volume proportion
+        2.0, 2.0,   # slice height and width (image proportions)
+        1.0,        # slice thickness
+        0.0,        # slice position (slice shift)
+        0, 1, 1,    # h, k, l
+        [0.0, 5.0], # membrane distance and width
+        H, W,       # image height and width, should keep image proportion specified by slice height and width
+        76,         # image quality (voxels along Z axis)
         ""
     )
   
