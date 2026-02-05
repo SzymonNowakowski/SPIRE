@@ -329,7 +329,7 @@ PYBIND11_MODULE(spirepy, m) {
         py::arg("h") = 0,
         py::arg("k") = 1,
         py::arg("l") = 1,
-        py::arg("membrane") = std::vector<double>{0.0, 5.0}),
+        py::arg("membrane") = std::vector<double>{0.0, 5.0},
         py::arg("image_height") = 256,
         py::arg("image_width")  = 256,
 
@@ -375,10 +375,10 @@ slice_thickness : float, default=1.0
 slice_position : float, default=0.0
     Relative position of the slice along the **c** axis (0 = centered).
 
-h, k, l : int
+h, k, l : int, default=0, 1, 1
     Miller indices defining the orientation of the structure.
 
-membrane : list of float
+membrane : list of float, default=[0.0, 5.0]
     Membrane parameters (distance and width). For each membrane, those two values are required.
 
 image_height : int, default=256
@@ -405,7 +405,7 @@ Raises
 RuntimeError
     If the buffer is incorrectly sized or if invalid parameters are supplied.
 )doc"
-    );
+);
 
     m.def(
     "compute_height",
