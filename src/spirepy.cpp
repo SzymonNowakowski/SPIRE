@@ -27,6 +27,8 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>   // for std::vector <-> python list conversion
+#include <vector>   //for std::vector
 #include "generate_spire_image.h"   //generate_spire_image function definition
 #include "img_manip.hpp"            //image_manipulation class
 
