@@ -17,7 +17,7 @@ docker pull snowakowski/spirepy:latest
 or you can consider downloading the dated tag with an explicit predefined Ubuntu and Python versions:
 
 ```bash
-docker pull snowakowski/spirepy:U24.04.3_P3.12_20251219
+docker pull snowakowski/spirepy:U24.04.3_P3.12_20260205
 ```
 
 For building it yourself from the provided Dockerfile:
@@ -26,7 +26,7 @@ For building it yourself from the provided Dockerfile:
 docker build -t spirepy:latest .
 ```
 
-#### Usage Examples
+#### Usage Examples for version `U24.04.3_P3.12_20260205`
 
 - Run a height calculation:
 
@@ -51,17 +51,17 @@ docker build -t spirepy:latest .
   buf = np.empty((H, W), dtype=np.uint8)
   spirepy.generate_spire_image(
       buf,
-      1,          # structure type: diamond
-      1.0,        # unit cell scale factors
-      1,0,        # unit cell scale in Z direction (1.0) 
-      0.5,        # channel volume proportion
-      2.0, 2.0,   # slice height and width (image proportions)
-      1.0,        # slice thickness
-      0.0,        # slice position (slice shift)
-      0, 1, 1,    # h, k, l
-      [0.0, 5.0], # membrane distance and width
-      H, W,       # image height and width, should keep image proportion specified by slice height and width
-      76,         # image quality (voxels along Z axis)
+      1,           # structure type: diamond
+      1.0,         # unit cell scale factors
+      1.0,         # unit cell scale in Z direction (1.0) 
+      0.5,         # channel volume proportion
+      2.0, 2.0,    # slice height and width (image proportions)
+      1.0,         # slice thickness
+      0.0,         # slice position (slice shift)
+      0, 1, 1,     # h, k, l
+      [0.0, 0.02], # membrane distance and width
+      H, W,        # image height and width, should keep image proportion specified by slice height and width
+      76,          # image quality (voxels along Z axis)
       ""
   )
   
@@ -83,17 +83,17 @@ docker build -t spirepy:latest .
     buf = np.empty((H, W), dtype=np.uint8)
     spirepy.generate_spire_image(
         buf,
-        1,          # structure type: diamond
-        1.0,        # unit cell scale factors
-        1,0,        # unit cell scale in Z direction (1.0) 
-        0.5,        # channel volume proportion
-        2.0, 2.0,   # slice height and width (image proportions)
-        1.0,        # slice thickness
-        0.0,        # slice position (slice shift)
-        0, 1, 1,    # h, k, l
-        [0.0, 5.0], # membrane distance and width
-        H, W,       # image height and width, should keep image proportion specified by slice height and width
-        76,         # image quality (voxels along Z axis)
+        1,           # structure type: diamond
+        1.0,         # unit cell scale factors
+        1.0,         # unit cell scale in Z direction (1.0) 
+        0.5,         # channel volume proportion
+        2.0, 2.0,    # slice height and width (image proportions)
+        1.0,         # slice thickness
+        0.0,         # slice position (slice shift)
+        0, 1, 1,     # h, k, l
+        [0.0, 0.02], # membrane distance and width
+        H, W,        # image height and width, should keep image proportion specified by slice height and width
+        76,          # image quality (voxels along Z axis)
         ""
     )
   
@@ -122,17 +122,17 @@ docker build -t spirepy:latest .
     buf = np.empty((H, W), dtype=np.uint8)
     spirepy.generate_spire_image(
         buf,
-        1,          # structure type: diamond
-        1.0,        # unit cell scale factors
-        1,0,        # unit cell scale in Z direction (1.0) 
-        0.5,        # channel volume proportion
-        2.0, 2.0,   # slice height and width (image proportions)
-        1.0,        # slice thickness
-        0.0,        # slice position (slice shift)
-        0, 1, 1,    # h, k, l
-        [0.0, 5.0], # membrane distance and width
-        H, W,       # image height and width, should keep image proportion specified by slice height and width
-        76,         # image quality (voxels along Z axis)
+        1,           # structure type: diamond
+        1.0,         # unit cell scale factors
+        1.0,         # unit cell scale in Z direction (1.0) 
+        0.5,         # channel volume proportion
+        2.0, 2.0,    # slice height and width (image proportions)
+        1.0,         # slice thickness
+        0.0,         # slice position (slice shift)
+        0, 1, 1,     # h, k, l
+        [0.0, 0.02], # membrane distance and width
+        H, W,        # image height and width, should keep image proportion specified by slice height and width
+        76,          # image quality (voxels along Z axis)
         ""
     )
   
@@ -161,17 +161,17 @@ docker build -t spirepy:latest .
     buf = np.empty((H, W), dtype=np.uint8)
     spirepy.generate_spire_image(
         buf,
-        1,          # structure type: diamond
-        1.0,        # unit cell scale factors
-        1,0,        # unit cell scale in Z direction (1.0) 
-        0.5,        # channel volume proportion
-        2.0, 2.0,   # slice height and width (image proportions)
-        1.0,        # slice thickness
-        0.0,        # slice position (slice shift)
-        0, 1, 1,    # h, k, l
-        [0.0, 5.0], # membrane distance and width
-        H, W,       # image height and width, should keep image proportion specified by slice height and width
-        76,         # image quality (voxels along Z axis)
+        1,           # structure type: diamond
+        1.0,         # unit cell scale factors
+        1.0,         # unit cell scale in Z direction (1.0) 
+        0.5,         # channel volume proportion
+        2.0, 2.0,    # slice height and width (image proportions)
+        1.0,         # slice thickness
+        0.0,         # slice position (slice shift)
+        0, 1, 1,     # h, k, l
+        [0.0, 0.02], # membrane distance and width
+        H, W,        # image height and width, should keep image proportion specified by slice height and width
+        76,          # image quality (voxels along Z axis)
         ""
     )
   
@@ -192,6 +192,7 @@ docker build -t spirepy:latest .
     print("After grains:", buf.flatten()[:16])
     EOF'
     ```
+
 ### Linux/Unix (and also Mac)
 
 This software uses CMake as build system. To build from the sources, following packages are needed:
