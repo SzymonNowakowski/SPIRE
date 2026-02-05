@@ -8,38 +8,39 @@ License: GPLv3
 
 ## Python via API from container
 
-### Build container
+### Build image and install client dependecies
 
-```bash
-docker build --target api -t spire:api .
-```
+1. Build image
+    ```bash
+    docker build --target api -t spire:api .
+    ```
+2. Install requirements for client from `client/requirements.txt`: `numpy`, `pillow`, `requests`
+    ```
+    pip install -r  client/requirements.txt
+    ```
 
 ### Usage
 
 1. Start server with up to 8 workers:
-  ```bash
-  export NUM_WORKERS=8
-  docker run --rm -p 8000:8000  -e UVICORN_WORKERS=$NUM_WORKERS spire:api
-  ```
-2. Install requirements for client from `client/requirements.txt`: `numpy`, `pillow`, `requests`
-  ```
-  pip install -r  client/requirements.txt
-  ```
-3. Generate default image:
-  ```
-  cd client
-  python example.py
-  ```
-4. Example of a multi thread generator and speed benchmarking
-  ```
-  cd client
-  python multithread_generator.py -n 128 -c 16 --W 256 --seed 123
-  ```
-  where concurrency (`-c`) should be not smaller than number of workers in order to take advantage of available cores
+    ```bash
+    export NUM_WORKERS=8
+    docker run --rm -p 8000:8000  -e UVICORN_WORKERS=$NUM_WORKERS spire:api
+    ```
+2. Generate default image:
+    ```
+    cd client
+    python example.py
+    ```
+3. Example of a multi thread generator and speed benchmarking
+    ```
+    cd client
+    python multithread_generator.py -n 128 -c 16 --W 256 --seed 123
+    ```
+    where concurrency (`-c`) should be not smaller than number of workers in order to take advantage of available cores
 
 ## GUI from container
 
-### Build container
+### Build image
 
 ```bash
 docker build --target gui -t spire:gui .
@@ -48,15 +49,15 @@ docker build --target gui -t spire:gui .
 ### Usage
 
 1. Start container
-  ```bash
-  export GUI_PORT=8001
-  docker run --rm -p $GUI_PORT:6080 spire:gui
-  ```
+    ```bash
+    export GUI_PORT=8001
+    docker run --rm -p $GUI_PORT:6080 spire:gui
+    ```
 2. Open: `http://localhost:GUI_PORT/vnc.html`, e.g. `http://localhost:8001/vnc.html`
 
 ## Work in container
 
-### Build container
+### Build image
 ```bash
 docker build --target bash -t spire:bash .
 ```
