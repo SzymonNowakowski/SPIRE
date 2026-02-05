@@ -54,7 +54,7 @@ docker build -t spirepy:latest .
       1, 1.0, 1.0, 0.5,
       2.0, 2.0,
       1.0, 0.0,
-      0, 1, 1,
+      0, 1, 1, [0.0, 5.0]
       H, W,
       76,
       ""
@@ -81,7 +81,7 @@ docker build -t spirepy:latest .
         1, 1.0, 1.0, 0.5,
         2.0, 2.0,
         1.0, 0.0,
-        0, 1, 1,
+        0, 1, 1, [0.0, 5.0]
         H, W,
         76,
         ""
@@ -115,7 +115,7 @@ docker build -t spirepy:latest .
         1, 1.0, 1.0, 0.5,
         2.0, 2.0,
         1.0, 0.0,
-        0, 1, 1,
+        0, 1, 1, [0.0, 5.0]
         H, W,
         76,
         ""
@@ -149,7 +149,7 @@ docker build -t spirepy:latest .
         1, 1.0, 1.0, 0.5,
         2.0, 2.0,
         1.0, 0.0,
-        0, 1, 1,
+        0, 1, 1, [0.0, 5.0]
         H, W,
         76,
         ""
@@ -166,7 +166,7 @@ docker build -t spirepy:latest .
         1,    # grain_number_std_dev
         30,   # magnitude
         4,    # blur kernel size for grains image
-        0.5   # original_image_proportion
+        0.5   # original_image_proportion_to_the_grains_image
     )
 
     print("After grains:", buf.flatten()[:16])
