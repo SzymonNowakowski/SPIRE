@@ -20,7 +20,7 @@
  * spirepy.generate_spire_image(out, slice_height = 2.0, slice_width = 2.0, image_height = H, image_width = W)
  * # 4. get access to a PyTorch tensor (without performing a copy)
  * t = torch.from_numpy(out)
- * # 5. note, you needn't reallocate the buffer to reuse it, as long as slice_height and slice_width stays fixed
+ * # 5. note, you needn't reallocate the buffer to reuse it, as long as slice_height and slice_width stay fixed together with the image_width (and height)
  * spirepy.generate_spire_image(out, slice_height = 2.0, slice_width = 2.0, image_height = H, image_width = W)
  *
 */
