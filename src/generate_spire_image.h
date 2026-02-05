@@ -19,6 +19,7 @@
  * @param slice_thickness Physical thickness of the slice (projection depth)
  * @param slice_position  Relative position of the slice (0 = centered)
  * @param h, k, l         Miller indices defining the orientation
+ * @param membrane        Mebrane parameters, for each membrane two values are required
  * @param image_height    Number of vertical pixels
  * @param image_width     Number of horizontal pixels
  * @param image_depth     Sampling density along z-axis (higher = better quality)
@@ -39,6 +40,7 @@ void generate_spire_image(
     int h = 0,                       // Miller index h
     int k = 1,                       // Miller index k
     int l = 1,                       // Miller index l
+    std::vector<double> membrane = {0.0, 5.0}, // Membrane parameters (distance and width). For each membrane, those two values are required.
     int image_height = 256,          // number of vertical pixels
     int image_width = 256,           // number of horizontal pixels
     int image_depth = 76,            // sampling density along z-axis

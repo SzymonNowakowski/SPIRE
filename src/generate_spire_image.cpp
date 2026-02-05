@@ -8,6 +8,7 @@
 #include "surface_projection.hpp"
 #include <fstream>   //file saving in generate_spire_image function
 
+
 /**
  * This function returns an image recomputed with provided parameters
  * and optionally saves it
@@ -27,7 +28,7 @@ void generate_spire_image(
     int h,                       // Miller index h
     int k,                       // Miller index k
     int l,                       // Miller index l
-
+    std::vector<double> membrane,// Membrane parameters (distance and width). For each membrane, those two values are required.
     int image_height,            // number of vertical pixels
     int image_width,             // number of horizontal pixels
 
@@ -60,7 +61,7 @@ void generate_spire_image(
   crystal.set_l(l);
 
   // Default membrane configuration (excluded from the argument list)
-  crystal.set_membranes(std::vector<double>{0.0, 0.02});
+  crystal.set_membranes(membrane);
 
   // Geometry update + projection
   crystal.update_geometry();

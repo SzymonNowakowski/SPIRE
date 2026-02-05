@@ -117,6 +117,8 @@ static uint8_t* extract_uint8_buffer_2d(py::array_t<uint8_t>& buffer,
  * \param[in]     k                 Miller index k.
  * \param[in]     l                 Miller index l.
  *
+ * \param[in]     membrane          Membrane parameters (distance and width). For each membrane, those two values are required.
+ *
  * \param[in]     image_height      Number of vertical pixels in the output image.
  * \param[in]     image_width       Number of horizontal pixels in the output image.
  *
@@ -138,6 +140,7 @@ void py_generate_spire_image(py::array_t<uint8_t> buffer,
                              int h,
                              int k,
                              int l,
+                             std::vector<double> membrane,
                              int image_height,
                              int image_width,
                              int image_depth,
@@ -187,6 +190,7 @@ void py_generate_spire_image(py::array_t<uint8_t> buffer,
                          h,
                          k,
                          l,
+                         membrane,
                          image_height,
                          image_width,
                          image_depth,
@@ -325,7 +329,7 @@ PYBIND11_MODULE(spirepy, m) {
         py::arg("h") = 0,
         py::arg("k") = 1,
         py::arg("l") = 1,
-
+        py::arg("membrane") = std::vector<double>{0.0, 5.0}),
         py::arg("image_height") = 256,
         py::arg("image_width")  = 256,
 
@@ -373,6 +377,9 @@ slice_position : float, default=0.0
 
 h, k, l : int
     Miller indices defining the orientation of the structure.
+
+membrane : list of float
+    Membrane parameters (distance and width). For each membrane, those two values are required.
 
 image_height : int, default=256
     Number of vertical pixels.
