@@ -29,12 +29,12 @@ License: GPLv3
 2. Generate default image:
     ```
     cd client
-  python generate_single.py --membrane-distance 0.0 --membrane-thickness 0.02
+    python generate_single.py
     ```
 3. Example of a multi thread generator and speed benchmarking
     ```
     cd client
-  python multithread_generator.py -n 128 -c 16 --W 256 --seed 123 --membrane-distance 0.0 --membrane-thickness 0.02
+    python multithread_generator.py -n 128 -c 16 --W 256 --seed 123 --membrane-distance 0.0 --membrane-thickness 0.02
     ```
     where concurrency (`-c`) should be not smaller than number of workers in order to take advantage of available cores
 
@@ -43,6 +43,22 @@ License: GPLv3
 ### Build image
 
 ```bash
+docker build --target gui -t spire:gui .
+```
+
+### Usage
+
+1. Start container
+    ```bash
+    export GUI_PORT=8001
+    docker run --rm -p $GUI_PORT:6080 spire:gui
+    ```
+2. Open: `http://localhost:GUI_PORT/vnc.html`, e.g. `http://localhost:8001/vnc.html`
+
+## Work in container
+
+### Build image
+```
 docker build --target gui -t spire:gui .
 ```
 
