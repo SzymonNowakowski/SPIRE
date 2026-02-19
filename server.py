@@ -31,8 +31,10 @@ def generate_spire_image(
     slice_thickness: float = 1.0,
     slice_position: float = 0.0,
     h: int = 0,
-    k: int = 1,
+    k: int = 0,
     l: int = 1,
+    membrane_distance: float = 0.0,
+    membrane_thickness: float = 0.02,
     image_depth: int = 76,
 ):
     # spirepy exports: compute_height(slice_height, slice_width, image_width)
@@ -55,6 +57,7 @@ def generate_spire_image(
         h,
         k,
         l,
+        [membrane_distance, membrane_thickness],
         H,
         W,
         image_depth,

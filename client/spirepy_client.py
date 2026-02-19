@@ -36,8 +36,10 @@ def generate_spire_image(
     slice_thickness: float = 1.0,
     slice_position: float = 0.0,
     h: int = 0,
-    k: int = 1,
+    k: int = 0,
     l: int = 1,
+    membrane_distance: float = 0.0,
+    membrane_thickness: float = 0.02,
     image_depth: int = 76,
     port = SPIRE_PORT,
     timeout_s: float = 120.0,
@@ -57,6 +59,8 @@ def generate_spire_image(
         "h": h,
         "k": k,
         "l": l,
+        "membrane_distance": membrane_distance,
+        "membrane_thickness": membrane_thickness,
         "image_depth": image_depth,
     }
     headers = None if keepalive else {"Connection": "close"}

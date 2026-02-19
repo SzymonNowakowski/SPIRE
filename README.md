@@ -29,12 +29,12 @@ License: GPLv3
 2. Generate default image:
     ```
     cd client
-    python example.py
+  python generate_single.py --membrane-distance 0.0 --membrane-thickness 0.02
     ```
 3. Example of a multi thread generator and speed benchmarking
     ```
     cd client
-    python multithread_generator.py -n 128 -c 16 --W 256 --seed 123
+  python multithread_generator.py -n 128 -c 16 --W 256 --seed 123 --membrane-distance 0.0 --membrane-thickness 0.02
     ```
     where concurrency (`-c`) should be not smaller than number of workers in order to take advantage of available cores
 
@@ -79,7 +79,7 @@ docker build --target bash -t spire:bash .
 - Generate an image buffer and show information about it:
 
   ```bash
-  docker run --rm snowakowski/spirepy:latest \
+  docker run --rm spire:bash \
   bash -c 'python3 - <<EOF
   import numpy as np, spirepy
   
@@ -96,7 +96,7 @@ docker build --target bash -t spire:bash .
       2.0, 2.0,    # slice height and width (image proportions)
       1.0,         # slice thickness
       0.0,         # slice position (slice shift)
-      0, 1, 1,     # h, k, l
+      0, 0, 1,     # h, k, l
       [0.0, 0.02], # membrane distance and width
       H, W,        # image height and width, should keep image proportion specified by slice height and width
       76,          # image quality (voxels along Z axis)
@@ -110,8 +110,8 @@ docker build --target bash -t spire:bash .
 - Generate and image and apply algorithmic distortions:
   - **Blur**
 
-    ```{bash}
-    docker run --rm snowakowski/spirepy:latest \
+    ```bash
+    docker run --rm spire:bash \
     bash -c 'python3 - <<EOF
     import numpy as np, spirepy
 
@@ -128,7 +128,7 @@ docker build --target bash -t spire:bash .
         2.0, 2.0,    # slice height and width (image proportions)
         1.0,         # slice thickness
         0.0,         # slice position (slice shift)
-        0, 1, 1,     # h, k, l
+        0, 0, 1,     # h, k, l
         [0.0, 0.02], # membrane distance and width
         H, W,        # image height and width, should keep image proportion specified by slice height and width
         76,          # image quality (voxels along Z axis)
@@ -150,7 +150,7 @@ docker build --target bash -t spire:bash .
   - **Noise**
 
     ```bash
-    docker run --rm snowakowski/spirepy:latest \
+    docker run --rm spire:bash \
     bash -c 'python3 - <<EOF
     import numpy as np, spirepy
 
@@ -167,7 +167,7 @@ docker build --target bash -t spire:bash .
         2.0, 2.0,    # slice height and width (image proportions)
         1.0,         # slice thickness
         0.0,         # slice position (slice shift)
-        0, 1, 1,     # h, k, l
+        0, 0, 1,     # h, k, l
         [0.0, 0.02], # membrane distance and width
         H, W,        # image height and width, should keep image proportion specified by slice height and width
         76,          # image quality (voxels along Z axis)
@@ -189,7 +189,7 @@ docker build --target bash -t spire:bash .
   - **Grains**
 
     ```bash
-    docker run --rm snowakowski/spirepy:latest \
+    docker run --rm spire:bash \
     bash -c 'python3 - <<EOF
     import numpy as np, spirepy
 
@@ -206,7 +206,7 @@ docker build --target bash -t spire:bash .
         2.0, 2.0,    # slice height and width (image proportions)
         1.0,         # slice thickness
         0.0,         # slice position (slice shift)
-        0, 1, 1,     # h, k, l
+        0, 0, 1,     # h, k, l
         [0.0, 0.02], # membrane distance and width
         H, W,        # image height and width, should keep image proportion specified by slice height and width
         76,          # image quality (voxels along Z axis)

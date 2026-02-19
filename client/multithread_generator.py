@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import os
 import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -15,6 +14,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("-n", "--num-samples", type=int, default=32, help="Number of images to generate")
     p.add_argument("-c", "--concurrency", type=int, default=8, help="Number of concurrent requests")
     p.add_argument("--W", type=int, default=256, help="Fixed image width (and height, since ratio=1)")
+    p.add_argument("--membrane-distance", type=float, default=0.0)
+    p.add_argument("--membrane-thickness", type=float, default=0.02)
     p.add_argument("--timeout", type=float, default=120.0)
     p.add_argument("--seed", type=int, default=None)
     return p.parse_args()
@@ -24,6 +25,8 @@ def batch_generator(
     n: int,
     concurrency: int,
     W: int,
+    membrane_distance: float,
+    membrane_thickness: float,
     timeout_s: float,
     seed: Optional[int],
 ) -> Iterator["object"]:
@@ -71,6 +74,8 @@ def batch_generator(
             "h": h,
             "k": k,
             "l": l,
+            "membrane_distance": membrane_distance,
+            "membrane_thickness": membrane_thickness,
             "image_depth": image_depth,
             "timeout_s": timeout_s,
         }
@@ -101,7 +106,15 @@ def main() -> None:
 
     t0 = time.perf_counter()
     count = 0
-    for _img in batch_generator(n=n, concurrency=conc, W=W, timeout_s=args.timeout, seed=args.seed):
+    for _img in batch_generator(
+        n=n,
+        concurrency=conc,
+        W=W,
+        membrane_distance=args.membrane_distance,
+        membrane_thickness=args.membrane_thickness,
+        timeout_s=args.timeout,
+        seed=args.seed,
+    ):
         count += 1
     t1 = time.perf_counter()
 

@@ -78,6 +78,18 @@ def parse_args() -> argparse.Namespace:
         default=0.0,
         help="Relative slice position (0=centered)",
     )
+    parser.add_argument(
+        "--membrane-distance",
+        type=float,
+        default=0.0,
+        help="Membrane offset from channel surface",
+    )
+    parser.add_argument(
+        "--membrane-thickness",
+        type=float,
+        default=0.02,
+        help="Membrane thickness",
+    )
 
     # Orientation (Miller indices)
     parser.add_argument("--h", type=int, default=0, help="Miller index h")
@@ -121,6 +133,8 @@ if __name__ == "__main__":
         slice_width=args.slice_width,
         slice_thickness=args.slice_thickness,
         slice_position=args.slice_position,
+        membrane_distance=args.membrane_distance,
+        membrane_thickness=args.membrane_thickness,
         h=args.h,
         k=args.k,
         l=args.l,

@@ -329,7 +329,7 @@ PYBIND11_MODULE(spirepy, m) {
         py::arg("slice_thickness") = 1.0,
         py::arg("slice_position")  = 0.0,
         py::arg("h") = 0,
-        py::arg("k") = 1,
+        py::arg("k") = 0,
         py::arg("l") = 1,
         py::arg("membrane") = std::vector<double>{0.0, 5.0},
         py::arg("image_height") = 256,
@@ -377,7 +377,7 @@ slice_thickness : float, default=1.0
 slice_position : float, default=0.0
     Relative position of the slice along the **c** axis (0 = centered).
 
-h, k, l : int, default=0, 1, 1
+h, k, l : int, default=0, 0, 1
     Miller indices defining the orientation of the structure.
 
 membrane : list of float, default=[0.0, 5.0]
