@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/pytorch:25.11-py3 AS base
+FROM python:3.11-slim-bookworm AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Common dependencies (shared by all targets)
 # ----------------------------------------------------------
 RUN apt-get update && apt-get install -y \
-    build-essential cmake ninja-build pkg-config \
+    build-essential cmake ninja-build pkg-config git \
     libopenblas-dev libpng-dev libcgal-dev \
     libgmp-dev libmpfr-dev \
     python3-dev \
@@ -18,16 +18,7 @@ RUN python3 -m pip install --upgrade pip pybind11
 # ----------------------------------------------------------
 # General Python ML packages (shared; keeps python usage consistent)
 # ----------------------------------------------------------
-RUN pip install \
-    albumentations \
-    hydra-core \
-    matplotlib \
-    pandas \
-    pytorch-lightning \
-    scipy \
-    scikit-image \
-    tqdm \
-    opencv-python-headless
+RUN pip install numpy==2.4.2
 
 # ----------------------------------------------------------
 # Copy SPIRE source
@@ -66,9 +57,7 @@ print("Installed:", dst)
 EOF
 
 RUN python3 - <<EOF
-import torch
 import spirepy
-print("PyTorch:", torch.__version__)
 print("spirepy OK")
 EOF
 

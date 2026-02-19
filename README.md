@@ -80,7 +80,7 @@ docker build --target bash -t spire:bash .
 
 ### Usage
 
-- Interactively (`torch` version incompatible with my GPU)
+- Interactively
   ```bash
   docker run --rm -it --gpus all spire:bash 
   ```

@@ -93,7 +93,7 @@ def parse_args() -> argparse.Namespace:
 
     # Orientation (Miller indices)
     parser.add_argument("--h", type=int, default=0, help="Miller index h")
-    parser.add_argument("--k", type=int, default=1, help="Miller index k")
+    parser.add_argument("--k", type=int, default=0, help="Miller index k")
     parser.add_argument("--l", type=int, default=1, help="Miller index l")
 
     # Sampling density
