@@ -24,7 +24,7 @@ def generate_spire_image(
     W: int = 256,
     structure_type: int = 1,
     uc_scale_ab: float = 1.0,
-    uc_scale_c: float = 1.0,
+    uc_scale_c: float | None = None,
     channel_vol_prop: float = 0.5,
     slice_height: float = 1.0,
     slice_width: float = 1.0,
@@ -37,6 +37,8 @@ def generate_spire_image(
     membrane_thickness: float = 0.02,
     image_depth: int = 76,
 ):
+    if uc_scale_c is None:
+        uc_scale_c = uc_scale_ab
     # spirepy exports: compute_height(slice_height, slice_width, image_width)
     H = spirepy.compute_height(slice_height, slice_width, W)
     image = np.empty((H, W), dtype=np.uint8)

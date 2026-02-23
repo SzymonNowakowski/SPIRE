@@ -14,10 +14,16 @@ License: GPLv3
     ```bash
     docker build --target api -t spire:api .
     ```
-2. Install requirements for client from `client/requirements.txt`: `numpy`, `pillow`, `requests`
-    ```
-    pip install -r  client/requirements.txt
-    ```
+2. Client setup:
+    - Option 1: install requirements only. Install requirements for client from `client/requirements.txt`: `numpy`, `pillow`, `requests`
+        ```
+        pip install -r  client/requirements.txt
+        ```
+    - Option 2: install client as a package to use it from anywhere:
+        ```
+        pip install -e .
+        ```
+
 
 ### Usage
 

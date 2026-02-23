@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spirepy-client"
+version = "0.1.0"
+description = "Small Python client for the SPIRE FastAPI service"
+requires-python = ">=3.9"
+dependencies = [
+  "numpy",
+  "pillow",
+  "requests",
+]
+
+[tool.setuptools]
+py-modules = ["spirepy_client"]
