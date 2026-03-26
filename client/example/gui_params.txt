@@ -1,0 +1,21 @@
+ # parameters
+Lx=1
+Ly=1
+Lz=0.23
+slice_position=0
+ax=0.4
+ay=0.4
+az=0.4
+uc_scale_ab=0.4
+uc_scale_c=0.4
+surface_level=0.513915
+<membranes>
+pos=0;width=0.02
+</membranes>
+channel_filled=0,1,0
+h=0
+k=0
+l=1
+n_points_x=256
+n_points_z=75
+type=1
